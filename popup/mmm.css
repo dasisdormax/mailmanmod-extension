@@ -1,0 +1,65 @@
+html {
+    overflow-x: hidden;
+}
+body {
+    margin:0px;
+    font-family: sans-serif;
+    width: 500px;
+    max-width: 100%;
+}
+.mmm-main {
+    margin:16px 7px 7px;
+    border:solid 1px hsl(0,0%,70%);
+    border-radius:7px;
+}
+.mmm-main h3 {
+    display:block;
+    color:hsl(0,0%,20%);
+    background-color:white;
+    text-align:center;
+    margin:0px auto;
+    width:140px;
+    transform:translateY(-50%);
+}
+.mmm-list {
+    margin-top:-8px;
+}
+.mmm-progress {
+    padding:3px;
+    text-align:center;
+}
+button {
+    cursor:pointer;
+    border:none;
+    padding:5px;
+    transition:background-color .2s linear;
+}
+.fw {
+    width:100%;
+}
+.hw {
+    width:50%;
+    float:left;
+    margin:0;
+}
+
+#mmm-btn-add {
+    background-color:hsla(0,0%,70%,.3);
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+}
+#mmm-btn-add:hover {
+    background-color:hsla(0,0%,70%,1);
+}
+#mmm-btn-import {
+    background-color:hsla(60,100%,50%,.25);
+}
+#mmm-btn-import:hover {
+    background-color:hsla(60,100%,50%,1);
+}
+#mmm-btn-export {
+    background-color:hsla(120,100%,50%,.25);
+}
+#mmm-btn-export:hover {
+    background-color:hsla(120,100%,50%,1);
+}

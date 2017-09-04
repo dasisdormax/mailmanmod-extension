@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+    "name": "mailmanmod",
+    "version": "0.1.0",
+
+    "description": "Manage and moderate all your mailman lists at once",
+    "homepage_url": "https://github.com/dasisdormax/mailmanmod-extension",
+
+    "applications": {
+	"gecko": {
+	    "id": "mailmanmod-extension@dasisdormax.github.com"
+	}
+    },
+    
+    "icons": {
+	"96": "icons/mmm-96.png",
+	"192": "icons/mmm-192.png"
+    },
+    
+    "browser_action": {
+	"default_icon": "icons/mmm-96.png",
+	"default_title": "Mailman Moderation",
+	"default_popup": "popup/mmm.html"
+    },
+
+    "permissions": [
+	"storage"
+    ],
+
+    "todo": [
+	"Add an icon"
+    ]
+}
