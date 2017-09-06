@@ -8,9 +8,11 @@
 
     "applications": {
 	"gecko": {
-	    "id": "mailmanmod-extension@dasisdormax.github.com"
+	    "id": "mailmanmod@dasisdormax.github.com"
 	}
     },
+
+    "content_security_policy": "script-src 'self' https://code.jquery.com; object-src 'self'",
     
     "icons": {
 	"96": "icons/mmm-96.png",
@@ -24,6 +26,7 @@
     },
 
     "permissions": [
+	"<all_urls>",
 	"storage"
     ],
 

@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="mmm.css">
+    <script
+	src="https://code.jquery.com/jquery-3.2.1.js"
+	integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+	crossorigin="anonymous">
+    </script>
+    <script src="mmm.js"></script>
 </head>
 <body>
-    <div class="mmm-main">
-	<h3>Mailing lists</h3>
-	<div class="mmm-list">
-	    <div class="mmm-progress">Loading ...</div>
+    <div id="main">
+	<div class="roundrect">
+	    <h3><span>Mailing lists</span></h3>
+	    <div id="mmm-lists">
+	    </div>
+	    <div>
+		<button id="mmm-list-edit" class="hw blue">Edit selected</button>
+		<button id="mmm-list-delete" class="hw red">Delete selected</button>
+	    </div>
+	    <button id="mmm-list-add" class="fw grey">+</button>
 	</div>
-	<button id="mmm-btn-add" class="fw">+</button>
+	<div class="fw">
+	    <button id="mmm-import" class="hw yellow">Import</button>
+	    <button id="mmm-export" class="hw green">Export</button>
+	</div>
     </div>
-    <div class="fw">
-	<button id="mmm-btn-import" class="hw">Import</button>
-	<button id="mmm-btn-export" class="hw">Export</button>
+    <div id="edit" class="roundrect hidden">
+	<h3><span>Add/Edit list</span></h3>
+	<button id="mmm-edit-cancel" class="fw grey">Cancel</button>
+	<form>
+	    <input type="hidden" id="edit-id" value="">
+	    <label for="name">List Name</label>
+	    <input type="text" class="fw" id="edit-name" value="">
+	    <label for="baseurl">Base URL</label>
+	    <input type="text" class="fw" id="edit-baseurl" value="">
+	    <label for="password">List password</label>
+	    <input type="text" class="fw" id="edit-password" value="">
+	</form>
+	<button id="mmm-edit-save" class="fw green">Save</button>
     </div>
+    <p id="status">Loading ...</p>
 </body>
 </html>

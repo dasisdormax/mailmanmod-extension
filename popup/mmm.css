@@ -7,25 +7,31 @@ body {
     width: 500px;
     max-width: 100%;
 }
-.mmm-main {
+.roundrect {
     margin:16px 7px 7px;
     border:solid 1px hsl(0,0%,70%);
     border-radius:7px;
 }
-.mmm-main h3 {
-    display:block;
+.roundrect > button:last-child {
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+}
+.roundrect h3 {
+    position:relative;
+    text-align:center;
+    transform:translateY(-50%);
+    margin:0px auto;
+}
+.roundrect h3 span {
     color:hsl(0,0%,20%);
     background-color:white;
-    text-align:center;
-    margin:0px auto;
-    width:140px;
-    transform:translateY(-50%);
+    padding:0px 8px;
 }
-.mmm-list {
-    margin-top:-8px;
+#mmm-lists {
+    margin-top:-7px;
 }
-.mmm-progress {
-    padding:3px;
+p {
+    margin:5px;
     text-align:center;
 }
 button {
@@ -42,24 +48,51 @@ button {
     float:left;
     margin:0;
 }
-
-#mmm-btn-add {
-    background-color:hsla(0,0%,70%,.3);
-    border-bottom-left-radius:5px;
-    border-bottom-right-radius:5px;
+.hidden {
+    display:none;
 }
-#mmm-btn-add:hover {
+form {
+    margin: 8px;
+}
+label {
+    margin: 6px 0 2px;
+    display:block;
+}
+input {
+    box-sizing: border-box;
+}
+#status {
+    font-style:italic;
+}
+
+/* buttons */
+button.grey {
+    background-color:hsla(0,0%,70%,.3);
+}
+button.grey:hover {
     background-color:hsla(0,0%,70%,1);
 }
-#mmm-btn-import {
+button.yellow {
     background-color:hsla(60,100%,50%,.25);
 }
-#mmm-btn-import:hover {
+button.yellow:hover {
     background-color:hsla(60,100%,50%,1);
 }
-#mmm-btn-export {
+button.green {
     background-color:hsla(120,100%,50%,.25);
 }
-#mmm-btn-export:hover {
+button.green:hover {
     background-color:hsla(120,100%,50%,1);
+}
+button.blue {
+    background-color:hsla(225,100%,75%,.5);
+}
+button.blue:hover {
+    background-color:hsla(225,100%,75%,1);
+}
+button.red {
+    background-color:hsla(0,100%,75%,.5);
+}
+button.red:hover {
+    background-color:hsla(0,100%,75%,1);
 }
