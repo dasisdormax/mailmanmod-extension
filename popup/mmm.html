@@ -16,11 +16,12 @@
 	    <h3><span>Mailing lists</span></h3>
 	    <div id="mmm-lists">
 	    </div>
-	    <div>
-		<button id="mmm-list-edit" class="hw blue">Edit selected</button>
-		<button id="mmm-list-delete" class="hw red">Delete selected</button>
-	    </div>
-	    <button id="mmm-list-add" class="fw grey">+</button>
+	    <select id="mmm-select-action" class="fw">
+		<option value="new" selected>Create a new mailing list</option>
+		<option value="edit">Edit selected list</option>
+		<option value="delete">Delete selected list</option>
+	    </select>
+	    <button id="mmm-list-perform-action" class="fw grey">Perform selected action!</button>
 	</div>
 	<div class="fw">
 	    <button id="mmm-import" class="hw yellow">Import</button>

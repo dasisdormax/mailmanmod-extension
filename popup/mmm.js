@@ -28,38 +28,80 @@ function updateList(newlist) {
 };
 
 function renderList(list) {
-    var id = "list-" + list.id;
-    var selector = "label#" + id;
+    var id = list.id;
+    var selector = "label#l-" + id;
     if(!$(selector).length) {
-	$("#mmm-lists").append($('<label id="' + id + '">'));
+	$("#mmm-lists").append($('<label id="l-' + id + '" for="r-' + id + '">'));
     }
     var elem = $(selector);
     elem.text(list.name);
+    elem.prepend($('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">'));
 };
 
 // Actions
-function listAddClick() {
-    showEditForm(newList());
+function actionNew(id) {
+    var newlist = newList();
+    var oldlist = id ? getListById(id) : lists[0];
+    if(oldlist) {
+	newlist.name     = oldlist.name;
+	newlist.baseurl  = oldlist.baseurl;
+	newlist.password = oldlist.password;
+    }
+    showEditForm(newlist);
 }
 
-function listUpdateClick() {
-    var list = getListById($('#edit-id').val());
-    list.name     = $('#edit-name').val().trim();
-    list.baseurl  = $('#edit-baseurl').val().trim();
-    list.baseurl  = list.baseurl.replace(/\/+$/,"");
-    list.password = $('#edit-password').val();
+function actionEdit(id) {
+    if(!id) {
+	status("Please select a mailing list to edit!");
+	return;
+    }
+    showEditForm(getListById(id));
+}
 
+function actionDelete(id) {
+    if(!id) {
+	status("Please select a mailing list to delete!");
+	return;
+    }
+    lists = lists.filter((list) => list.id != id);
+    saveAll();
+    showLists();
+}
+
+function listActionClick() {
+    var id = $("input[name=listid]:checked").val();
+    var action = $("#mmm-select-action").val();
+    console.log("Executing action " + action + " on item " + id + " ...");
+    switch(action) {
+	case "new":
+	    actionNew(id); break;
+	case "edit":
+	    actionEdit(id); break;
+	case "delete":
+	    actionDelete(id); break;
+	default:
+	    status("Please select an action!");
+    }
+}
+
+function editSaveClick() {
+    var list = {
+	"id":       $('#edit-id').val(),
+	"name":     $('#edit-name').val().trim(),
+	"baseurl":  $('#edit-baseurl').val().trim().replace(/\/+$/,""),
+	"password": $('#edit-password').val()
+    };
+	
     // Validate
     if(list.name.length < 1 || list.baseurl.search(/^https?:\/\//) < 0 || list.baseurl.indexOf("*") >= 0) {
 	status(
 	    "Validation failed! Please make sure to specify a list name and " +
 	    "the protocol of the base URL (http or https)."
 	);
-	return;
+    } else {
+	updateList(list);
+	showLists();
     }
-
-    updateList(list);
-    showLists();
 }
 
 // Storage
@@ -94,6 +136,7 @@ function select(selection) {
 	    $(id).addClass("hidden");
 	}
     }
+    status("");
 }
 
 function renderAll() {
@@ -110,7 +153,6 @@ function renderAll() {
 
 function showLists() {
     select("#main");
-    status("");
     renderAll();
 }
 
@@ -126,8 +168,8 @@ var storage = browser.storage.sync || browser.storage.local;
 var lists = [];
 
 $(function() {
-    $("#mmm-list-add").click(listAddClick);
+    $("#mmm-list-perform-action").click(listActionClick);
     $("#mmm-edit-cancel").click(showLists);
-    $("#mmm-edit-update").click(listUpdateClick);
+    $("#mmm-edit-save").click(editSaveClick);
     loadAll().then(showLists,showLists);
 });

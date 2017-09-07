@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 html {
     overflow-x: hidden;
 }
@@ -28,7 +31,8 @@ body {
     padding:0px 8px;
 }
 #mmm-lists {
-    margin-top:-7px;
+    margin-top:-12px;
+    padding:8px;
 }
 p {
     margin:5px;
@@ -57,9 +61,6 @@ form {
 label {
     margin: 6px 0 2px;
     display:block;
-}
-input {
-    box-sizing: border-box;
 }
 #status {
     font-style:italic;
