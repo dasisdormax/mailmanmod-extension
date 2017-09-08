@@ -17,11 +17,12 @@
 	    <div id="mmm-lists">
 	    </div>
 	    <select id="mmm-select-action" class="fw">
+		<option value="refresh">Refresh all lists</option>
 		<option value="new" selected>Create a new mailing list</option>
 		<option value="edit">Edit selected list</option>
 		<option value="delete">Delete selected list</option>
 	    </select>
-	    <button id="mmm-list-perform-action" class="fw grey">Perform selected action!</button>
+	    <button id="mmm-list-perform-action" class="fw blue">Perform selected action!</button>
 	</div>
 	<div class="fw">
 	    <button id="mmm-import" class="hw yellow">Import</button>
@@ -42,6 +43,7 @@
 	</form>
 	<button id="mmm-edit-save" class="fw green">Save</button>
     </div>
+    <div id="result" class="hidden"></div>
     <p id="status">Loading ...</p>
 </body>
 </html>

@@ -30,10 +30,6 @@ body {
     background-color:white;
     padding:0px 8px;
 }
-#mmm-lists {
-    margin-top:-12px;
-    padding:8px;
-}
 p {
     margin:5px;
     text-align:center;
@@ -66,34 +62,57 @@ label {
     font-style:italic;
 }
 
+/* List display */
+#mmm-lists {
+    margin-top:-12px;
+    padding:8px;
+}
+span::before, span::after {
+    font-size:.7em;
+    color:hsl(0,0%,30%);
+}
+#mmm-lists div:not([data-mails]) span::before {
+    content: 'LOADING ';
+}
+#mmm-lists div[data-mails="0"] span::after {
+    content: ' NO ACTION REQUIRED';
+}
+.mail {
+    margin:10px 20px;
+    padding:8px;
+    border:solid 1px black;
+    font-size:.8em;
+}
+
+
 /* buttons */
-button.grey {
+.grey {
     background-color:hsla(0,0%,70%,.3);
 }
-button.grey:hover {
+.grey:hover {
     background-color:hsla(0,0%,70%,1);
 }
-button.yellow {
+.yellow {
     background-color:hsla(60,100%,50%,.25);
 }
-button.yellow:hover {
+.yellow:hover {
     background-color:hsla(60,100%,50%,1);
 }
-button.green {
+.green {
     background-color:hsla(120,100%,50%,.25);
 }
-button.green:hover {
+.green:hover {
     background-color:hsla(120,100%,50%,1);
 }
-button.blue {
-    background-color:hsla(225,100%,75%,.5);
+.blue {
+    background-color:hsla(225,100%,80%,.5);
 }
-button.blue:hover {
-    background-color:hsla(225,100%,75%,1);
+.blue:hover {
+    background-color:hsla(225,100%,80%,1);
 }
-button.red {
+.red {
     background-color:hsla(0,100%,75%,.5);
 }
-button.red:hover {
+.red:hover {
     background-color:hsla(0,100%,75%,1);
 }
