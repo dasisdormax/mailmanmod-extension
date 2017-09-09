@@ -13,11 +13,11 @@ body {
 .roundrect {
     margin:16px 7px 7px;
     border:solid 1px hsl(0,0%,70%);
-    border-radius:7px;
+    border-radius:9px;
 }
 .roundrect > button:last-child {
-    border-bottom-left-radius:5px;
-    border-bottom-right-radius:5px;
+    border-bottom-left-radius:7px;
+    border-bottom-right-radius:7px;
 }
 .roundrect h3 {
     position:relative;
@@ -29,10 +29,6 @@ body {
     color:hsl(0,0%,20%);
     background-color:white;
     padding:0px 8px;
-}
-p {
-    margin:5px;
-    text-align:center;
 }
 button {
     cursor:pointer;
@@ -47,6 +43,9 @@ button {
     width:50%;
     float:left;
     margin:0;
+}
+.clearfix {
+    overflow:auto;
 }
 .hidden {
     display:none;
@@ -78,10 +77,13 @@ span::before, span::after {
     content: ' NO ACTION REQUIRED';
 }
 .mail {
-    margin:10px 20px;
-    padding:8px;
+    margin:10px 15px;
     border:solid 1px black;
-    font-size:.8em;
+}
+.mail p {
+    font-size:.85em;
+    padding:10px;
+    margin:0px;
 }
 
 

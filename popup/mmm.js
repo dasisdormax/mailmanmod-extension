@@ -1,6 +1,8 @@
 "use strict";
 
-// Creates a new list
+/*******************
+ * List operations *
+ *******************/
 function newList(id) {
     id = id || new Date().getTime().toString(36) + Math.floor(Math.random() * 1.e9).toString(36);
     return {
@@ -43,12 +45,23 @@ function renderList(list) {
     if(list.time && list.time + 1800000 > new Date().getTime()) {
 	$(div).attr('data-mails', list.mails.length);
 	list.mails.forEach(function(mail) {
-	    $(div).append($('<div class="mail grey" data-listid="' + id + '" data-msgid="' + mail.msgid + '">'));
-	    let mdiv = 'div[data-msgid="' + mail.msgid + '"]';
-	    $(mdiv).append($('<strong>'));
-	    $(mdiv + ">strong").text(mail.subject);
-	    $(mdiv).append($('<br>'));
-	    $(mdiv).append("From: " + mail.from);
+	    // Render individual e-mails
+	    let mdiv     = '#m-' + mail.msgid;
+	    let p        = mdiv + ">p";
+	    let clearfix = mdiv + ">.clearfix";
+	    $(div).append($('<div class="mail" id="m-' + mail.msgid + '">'));
+	    $(mdiv).attr('data-msgid', mail.msgid);
+	    $(mdiv).attr('data-listid', id);
+	    $(mdiv).append($('<p>'));
+	    $(p).append($('<strong>'));
+	    $(p + ">strong").text(mail.subject);
+	    $(p).append($('<br>'));
+	    $(p).append("From: " + mail.from);
+	    $(mdiv).append($('<div class="clearfix">'));
+	    $(clearfix).append($('<button class="hw green" data-accept>Accept</button>'));
+	    $(clearfix).append($('<button class="hw grey" data-details>Details</button>'));
+	    $(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
+	    $(clearfix + ">button[data-details]").click(mailDetailsClick);
 	});
     } else {
 	$(div).removeAttr('data-mails');
@@ -62,10 +75,17 @@ function refreshList(list) {
 	"adminpw":  list.password,
 	"admlogin": "Login"
     }
-    $.post(url, data, (result) => parseResponse(list, result));
+    $.post(url, data, function(html) {
+	parseAdmindb(list, html);
+	saveAll();
+	renderList(list);
+    });
 }
 
-function parseResponse(list, html) {
+/**********************
+ * XHR Result Parsers *
+ **********************/
+function parseAdmindb(list, html) {
     // Remove everything except the body contents
     html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
     html = html.replace(/<\/body(.|\n)*/i,       '');
@@ -74,7 +94,6 @@ function parseResponse(list, html) {
     list.time = new Date().getTime();
     list.mails = [];
     if(result.find("form").length) {
-	list.csrftoken = result.find("input[name=csrf_token]").val();
 	// Parse e-mails for each group (mails by the same sender)
 	result.find("form>table>tbody>tr").each(function(){
 	    var from = $(this).find("tbody>tr>td").html().match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+/i)[0];
@@ -96,11 +115,27 @@ function parseResponse(list, html) {
 	});
     }
     result.empty();
-    saveAll();
-    renderList(list);
 }
 
-// Actions
+function parseMailDetails(msgid, html) {
+    // Remove everything except the body contents
+    html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
+    html = html.replace(/<\/body(.|\n)*/i,       '');
+    var result = $("#result");
+    var details = {};
+    result.html(html);
+    if(result.find("form").length) {
+	details.csrftoken = result.find("input[name=csrf_token]").val();
+	details.headers   = result.find('textarea[name="headers-' + msgid + '"]').val();
+	details.text      = result.find('textarea[name="fulltext-' + msgid + '"]').val();
+    }
+    result.empty();
+    return details;
+}
+
+/*********************************************
+ * Actions that can be initiated by the user *
+ *********************************************/
 function actionNew(id) {
     var newlist = newList();
     var oldlist = id ? getListById(id) : lists[0];
@@ -135,6 +170,34 @@ function actionRefresh() {
     showLists();
 }
 
+function mailAction(action, list, msgid, csrftoken) {
+    var value = 0;
+    console.log("Executing action " + action + " on message #" + msgid + " in list " + list.name);
+    switch(action) {
+	case "accept":
+	    value = 1; break;
+	case "reject":
+	    value = 2; break;
+	case "discard":
+	    value = 3; break;
+	default:
+	    value = 0;
+    }
+    var url = list.baseurl + "/admindb/" + list.name;
+    var data = {
+	"csrf_token": csrftoken,
+	"submit": "Submit Data ..."
+    }
+    data[msgid] = value;
+    console.log(data);
+    $.post(url, data, function(html) {
+	// We can directly parse the result and update the list object
+	parseAdmindb(list, html);
+	saveAll();
+	renderList(list);
+    });
+}
+
 function listActionClick() {
     var id = $("input[name=listid]:checked").val();
     var action = $("#mmm-select-action").val();
@@ -151,6 +214,26 @@ function listActionClick() {
 	default:
 	    status("Please select an action!");
     }
+}
+
+function mailAcceptClick() {
+    var div   = $(this).parents(".mail");
+    var list  = getListById(div.attr("data-listid"));
+    var msgid = div.attr("data-msgid");
+    var url = list.baseurl + "/admindb/" + list.name;
+    var data = {
+	msgid
+    };
+    $.get(url, data, function(html) {
+	var details = parseMailDetails(msgid, html);
+	mailAction("accept", list, msgid, details.csrftoken);
+    });
+}
+
+function mailDetailsClick() {
+}
+
+function detailActionClick() {
 }
 
 function editSaveClick() {
