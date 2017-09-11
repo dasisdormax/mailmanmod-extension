@@ -11,8 +11,21 @@ function refreshList(list) {
 	adminpw:  list.password,
 	admlogin: "Login"
     }
+    list.error = null;
     $.post(url, data, function(html) {
 	parseAdmindb(list, html);
+	saveAll();
+	renderList(list);
+    }).fail(function(request){
+	switch(request.status) {
+	    case 401:
+		list.error = 'badpass'; break;
+	    case 404:
+		list.error = 'notfound'; break;
+	    default:
+		list.error = 'unknown';
+	}
+	list.time = new Date().getTime();
 	saveAll();
 	renderList(list);
     });
@@ -20,6 +33,7 @@ function refreshList(list) {
 
 // Executes an action (accept, reject, discard) for a single mail
 function mailAction(action, list, msgid, csrf_token) {
+    if(list.error) return;
     var url = list.baseurl + "/admindb/" + list.name;
     if(csrf_token === undefined) {
 	$.get(url, {msgid}, function(html) {

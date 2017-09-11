@@ -58,6 +58,8 @@ label {
     display:block;
 }
 #status {
+    margin: 10px;
+    text-align:center;
     font-style:italic;
 }
 
@@ -70,11 +72,21 @@ span::before, span::after {
     font-size:.7em;
     color:hsl(0,0%,30%);
 }
-#mmm-lists div:not([data-mails]) span::before {
+#mmm-lists div:not([data-mails]):not([data-err]) span::before {
     content: 'LOADING ';
 }
 #mmm-lists div[data-mails="0"] span::after {
     content: ' NO ACTION REQUIRED';
+}
+#mmm-lists div[data-err] span::after {
+    color: red;
+    content: ' UNKNOWN ERROR';
+}
+#mmm-lists div[data-err="notfound"] span::after {
+    content: ' LIST NOT FOUND';
+}
+#mmm-lists div[data-err="badpass"] span::after {
+    content: ' INVALID PASSWORD';
 }
 .mail {
     margin:10px 15px;

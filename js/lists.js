@@ -42,22 +42,26 @@ function loadAll() {
     });
 };
 
-// Save all lists to the addon storage
 function saveAll() {
+    // Sort lists by list name
     lists.sort((a,b) => a.name > b.name ? 1 : -1);
+    // Sync to background task and persistent storage
+    if(bgwindow) bgwindow.lists = lists;
     storage.set({lists});
-    var totalMails = 0;
-    lists.forEach((list) => totalMails += list.mails.length);
-    if(totalMails > 0) {
-	browser.browserAction.setBadgeBackgroundColor({color: "red"});
-	browser.browserAction.setBadgeText({text: "" + totalMails});
-    } else {
-	browser.browserAction.setBadgeText({text: ""});
-    }
+    updateIcon();
+}
+
+function updateIcon() {
+    // Count total mails and update browser action
+    var mails = 0;
+    lists.forEach((list) => mails += list.mails.length);
+    browser.browserAction.setBadgeBackgroundColor({color: "red"});
+    browser.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
 }
 
 /***********
  * GLOBALS *
  ***********/
 var storage = browser.storage.sync || browser.storage.local;
+var bgwindow;
 var lists = [];

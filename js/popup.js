@@ -96,36 +96,46 @@ function renderList(list) {
     if(!$(div).length) {
 	$("#mmm-lists").append($('<div id="d-' + id + '">'));
     }
+    // reset div contents and attributes
+    $(div).removeAttr('data-err');
+    $(div).removeAttr('data-mails');
     $(div).empty();
+
+    // create list label and radio button
     $(div).append($('<label for="r-' + id + '">'));
     $(label).append($('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">'));
     $(label).append($('<span>'));
     $(label + ">span").text(list.name);
 
-    if(list.time && list.time + 1800000 > new Date().getTime()) {
-	$(div).attr('data-mails', list.mails.length);
-	list.mails.forEach(function(mail) {
-	    // Render individual e-mails
-	    let mdiv     = '#m-' + mail.msgid;
-	    let p        = mdiv + ">p";
-	    let clearfix = mdiv + ">.clearfix";
-	    $(div).append($('<div class="mail" id="m-' + mail.msgid + '">'));
-	    $(mdiv).attr('data-msgid', mail.msgid);
-	    $(mdiv).attr('data-listid', id);
-	    $(mdiv).append($('<p>'));
-	    $(p).append($('<strong>'));
-	    $(p + ">strong").text(mail.subject);
-	    $(p).append($('<br>'));
-	    $(p).append("From: " + mail.from);
-	    $(mdiv).append($('<div class="clearfix">'));
-	    $(clearfix).append($('<button class="hw green" data-accept>Accept</button>'));
-	    $(clearfix).append($('<button class="hw grey" data-details>Details</button>'));
-	    $(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
-	    $(clearfix + ">button[data-details]").click(mailDetailsClick);
-	});
-    } else {
-	$(div).removeAttr('data-mails');
+    if(!list.time || new Date().getTime() > list.time + 600000) {
+	// Refresh if the last update is more than 10 minutes ago
 	refreshList(list);
+    } else {
+	if(list.error) {
+	    // Display error message
+	    $(div).attr('data-err', list.error);
+	} else {
+	    $(div).attr('data-mails', list.mails.length);
+	    list.mails.forEach(function(mail) {
+		let mdiv     = '#m-' + mail.msgid;
+		let p        = mdiv + ">p";
+		let clearfix = mdiv + ">.clearfix";
+		// Create child div for each e-mail
+		$(div).append($('<div class="mail" id="m-' + mail.msgid + '">'));
+		$(mdiv).attr('data-msgid', mail.msgid);
+		$(mdiv).attr('data-listid', id);
+		$(mdiv).append($('<p>'));
+		$(p).append($('<strong>'));
+		$(p + ">strong").text(mail.subject);
+		$(p).append($('<br>'));
+		$(p).append("From: " + mail.from);
+		$(mdiv).append($('<div class="clearfix">'));
+		$(clearfix).append($('<button class="hw green" data-accept>Accept</button>'));
+		$(clearfix).append($('<button class="hw grey" data-details>Details</button>'));
+		$(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
+		$(clearfix + ">button[data-details]").click(mailDetailsClick);
+	    });
+	}
     }
 }
 
@@ -137,8 +147,9 @@ function status(text) {
     }
 }
 
+// Select the page to show: all others will be hidden
 function select(selection) {
-    var panes = ["#main", "#edit"];
+    var panes = ["#main", "#edit", "#details"];
     for(var i = 0; i < panes.length; i++) {
 	var id = panes[i];
 	if(id === selection) {
@@ -175,10 +186,28 @@ function showEditForm(list) {
     $('#edit-password').val(list.password);
 }
 
-// Begin execution
+/**************************************
+ * Communication with background task *
+ **************************************/
+function handleMessage(msg) {
+    if(msg.event == "renderList") {
+	renderList(msg.list);
+    }
+}
+
+/******************
+ * INITIALIZATION *
+ ******************/
 $(function() {
-    $("#mmm-list-perform-action").click(listActionClick);
-    $("#mmm-edit-cancel").click(showLists);
-    $("#mmm-edit-save").click(editSaveClick);
-    loadAll().then(showLists,showLists);
+    browser.runtime.getBackgroundPage().then(function(bgw){
+	$("#mmm-list-perform-action").click(listActionClick);
+	$("#mmm-edit-cancel").click(showLists);
+	$("#mmm-edit-save").click(editSaveClick);
+	// Use the lists object from the background task window
+	bgwindow = bgw;
+	lists = bgw.lists;
+	showLists();
+	// Listen to list updates from the background task
+	browser.runtime.onMessage.addListener(handleMessage);
+    });
 });
