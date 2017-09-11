@@ -96,6 +96,44 @@ function editSaveClick() {
     }
 }
 
+function importFromFile() {
+    var file = this.files[0];
+    if(!file || file.type.search(/json/) < 0) return;
+    var reader = new FileReader();
+    reader.onload = function(event){
+	var json = event.target.result;
+	var parsed = JSON.parse(json);
+	if(!Array.isArray(parsed)) return;
+	var tmp = [];
+	parsed.forEach(function(list) {
+	    var newlist = newList();
+	    newlist.name     = list.name;
+	    newlist.baseurl  = list.baseurl;
+	    newlist.password = list.password;
+	    tmp.push(newlist);
+	});
+	lists = tmp;
+	saveAll();
+    };
+    reader.readAsText(file);
+}
+
+function importClick() {
+    $("#import-file").click();
+}
+
+function exportClick() {
+    var tmp = [];
+    lists.forEach((list) => tmp.push({
+	name: list.name,
+	baseurl: list.baseurl,
+	password: list.password
+    }));
+    var json = JSON.stringify(tmp);
+    var url = "data:text/json;base64," + btoa(json);
+    download(url, "mmm.json", "text/json");
+}
+
 /*************
  * RENDERING *
  *************/
@@ -230,6 +268,9 @@ function handleMessage(msg) {
 $(function() {
     $("#mmm-list-perform-action").click(listActionClick);
     $("#mmm-edit-save").click(editSaveClick);
+    $("#mmm-import").click(importClick);
+    $("#mmm-export").click(exportClick);
+    $("#import-file").change(importFromFile);
     $("button[data-cancel]").click(showLists);
     $("button[data-mailaction]").click(detailActionClick);
     var then = function(){

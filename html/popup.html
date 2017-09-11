@@ -8,6 +8,7 @@
 	integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
 	crossorigin="anonymous">
     </script>
+    <script src="/js/downloadjs/download.min.js"></script>
     <script src="/js/lists.js"></script>
     <script src="/js/network.js"></script>
     <script src="/js/popup.js"></script>
@@ -45,7 +46,7 @@
 	</form>
 	<button id="mmm-edit-save" class="fw green">Save</button>
     </div>
-    <div id="details" class="roundrect">
+    <div id="details" class="roundrect hidden">
 	<h3><span>Mail Details</span></h3>
 	<button class="fw grey" data-cancel>Cancel</button>
 	<p id="summary"></p>
@@ -60,6 +61,7 @@
 	<button class="fw yellow" data-mailaction="discard">Discard</button>
     </div>
     <div id="result" class="hidden"></div>
+    <input id="import-file" type="file" class="hidden">
     <p id="status">Loading ...</p>
 </body>
 </html>
