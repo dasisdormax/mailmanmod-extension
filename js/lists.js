@@ -45,9 +45,8 @@ function loadAll() {
 function saveAll() {
     // Sort lists by list name
     lists.sort((a,b) => a.name > b.name ? 1 : -1);
-    // Sync to background task and persistent storage
-    if(bgwindow) bgwindow.lists = lists;
-    storage.set({lists});
+    // Sync to persistent storage and background task
+    var setting = storage.set({lists}).then(invalidateLists);
     updateIcon();
 }
 
@@ -59,9 +58,15 @@ function updateIcon() {
     browser.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
 }
 
+// Background task and popup notify each other of changes of the lists object
+function invalidateLists() {
+    browser.runtime.sendMessage({
+	action: 'invalidateLists'
+    });
+}
+
 /***********
  * GLOBALS *
  ***********/
 var storage = browser.storage.sync || browser.storage.local;
-var bgwindow;
 var lists = [];

@@ -186,12 +186,16 @@ function showEditForm(list) {
     $('#edit-password').val(list.password);
 }
 
-/**************************************
- * Communication with background task *
- **************************************/
+/*****************
+ * COMMUNICATION *
+ *****************/
 function handleMessage(msg) {
-    if(msg.event == "renderList") {
-	renderList(msg.list);
+    switch(msg.action) {
+	case 'renderList':
+	    renderList(msg.list); break;
+	case 'invalidateLists':
+	    loadAll().then(renderAll); break;
+	default:
     }
 }
 
@@ -199,15 +203,13 @@ function handleMessage(msg) {
  * INITIALIZATION *
  ******************/
 $(function() {
-    browser.runtime.getBackgroundPage().then(function(bgw){
-	$("#mmm-list-perform-action").click(listActionClick);
-	$("#mmm-edit-cancel").click(showLists);
-	$("#mmm-edit-save").click(editSaveClick);
-	// Use the lists object from the background task window
-	bgwindow = bgw;
-	lists = bgw.lists;
-	showLists();
+    $("#mmm-list-perform-action").click(listActionClick);
+    $("#mmm-edit-cancel").click(showLists);
+    $("#mmm-edit-save").click(editSaveClick);
+    var then = function(){
 	// Listen to list updates from the background task
 	browser.runtime.onMessage.addListener(handleMessage);
-    });
+	showLists();
+    }
+    loadAll().then(then, then);
 });

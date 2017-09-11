@@ -3,8 +3,7 @@
 // a "dummy" renderList function
 function renderList(list) {
     browser.runtime.sendMessage({
-	event: "renderList",
-	sender: "background.js",
+	action: "renderList",
 	list
     });
 }
@@ -13,13 +12,20 @@ function renderList(list) {
  * BACKGROUND TASK *
  *******************/
 function bgRefreshAll() {
-    time = new Date().getTime();
+    if(refresh) {
+	loadAll().then(function() {
+	    refresh = false;
+	    bgRefreshAll();
+	});
+	return;
+    }
+    var time = new Date().getTime();
     for(let i = 0; i < lists.length; i++) {
 	// Cancel if the list item has been deleted
 	if(!lists[i]) continue;
 	// Background update with a lower frequency -> once every 30 minutes
 	// Also, don't update more than one list in one go
-	list = lists[i];
+	var list = lists[i];
 	if(!list.time || time > list.time + 1800000) {
 	    refreshList(list);
 	    return;
@@ -27,9 +33,22 @@ function bgRefreshAll() {
     }
 }
 
+/*****************
+ * COMMUNICATION *
+ *****************/
+function handleMessage(msg) {
+    switch(msg.action) {
+	case 'invalidateLists':
+	    refresh = true; break;
+	default:
+    }
+}
+
 /******************
  * INITIALIZATION *
  ******************/
+var refresh = false;
+
 $(function(){
     var then = function() {
 	updateIcon();
