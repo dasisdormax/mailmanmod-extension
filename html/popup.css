@@ -92,12 +92,27 @@ span::before, span::after {
     margin:10px 15px;
     border:solid 1px black;
 }
-.mail p {
+.mail p, #details p {
     font-size:.85em;
     padding:10px;
     margin:0px;
 }
-
+/* mail details */
+#headers, #fulltext {
+    white-space: pre-wrap;
+}
+#headers::before, #fulltext::before {
+    font-size: 1.2em;
+    padding: 10px 0;
+    display: block;
+    color: hsl(0, 0%, 30%);
+}
+#headers::before {
+    content: 'HEADERS';
+}
+#fulltext::before {
+    content: 'CONTENT (shortened)';
+}
 
 /* buttons */
 .grey {

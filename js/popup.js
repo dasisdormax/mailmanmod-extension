@@ -63,9 +63,19 @@ function mailAcceptClick() {
 }
 
 function mailDetailsClick() {
+    var div   = $(this).parents(".mail");
+    var list  = getListById(div.attr("data-listid"));
+    var msgid = div.attr("data-msgid");
+    getMailDetails(list, msgid).then((details) => renderMailDetails(list, details));
 }
 
 function detailActionClick() {
+    var list       = getListById($("#mail-listid").val());
+    var msgid      = $("#mail-msgid").val();
+    var csrf_token = $("#mail-csrftoken").val();
+    var action     = $(this).attr("data-mailaction");
+    mailAction(action, list, msgid, csrf_token);
+    showLists();
 }
 
 function editSaveClick() {
@@ -139,6 +149,21 @@ function renderList(list) {
     }
 }
 
+function renderMailDetails(list, details) {
+    $("#summary").empty();
+    $("#summary").append($('<strong>'));
+    $("#summary>strong").text(details.subject);
+    $("#summary").append($('<br>'));
+    $("#summary").append("From: " + details.from);
+    $("#headers").text(details.headers);
+    var text = details.text.replace(/<[a-zA-Z\/][^>]*(>|$)/g,'');
+    $("#fulltext").text(text);
+    $("#mail-listid").val(list.id);
+    $("#mail-msgid").val(details.msgid);
+    $("#mail-csrftoken").val(details.csrf_token);
+    select("#details");
+}
+
 function status(text) {
     $("p#status").remove();
     if(text) {
@@ -204,8 +229,9 @@ function handleMessage(msg) {
  ******************/
 $(function() {
     $("#mmm-list-perform-action").click(listActionClick);
-    $("#mmm-edit-cancel").click(showLists);
     $("#mmm-edit-save").click(editSaveClick);
+    $("button[data-cancel]").click(showLists);
+    $("button[data-mailaction]").click(detailActionClick);
     var then = function(){
 	// Listen to list updates from the background task
 	browser.runtime.onMessage.addListener(handleMessage);

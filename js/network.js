@@ -31,15 +31,39 @@ function refreshList(list) {
     });
 }
 
+// gets mail details asynchronously
+// Usage: getMailDetails(list, msgid).then(callback);
+function getMailDetails(list, msgid) {
+    var url = list.baseurl + "/admindb/" + list.name;
+    // return a promise that resolves with the details object
+    // if the response could be parsed correctly
+    return new Promise((resolve, reject) => {
+	$.get(url, {msgid}).done(function(html){
+	    let details = parseMailDetails(msgid, html);
+	    if(details) {
+		// Add data from mail object
+		let mail = list.mails.find((mail) => mail.msgid == msgid);
+		details.msgid   = msgid;
+		details.from    = mail.from;
+		details.subject = mail.subject;
+		details.size    = mail.size;
+		resolve(details);
+	    } else {
+		reject();
+	    }
+	}).fail(function() {
+	    reject();
+	});
+    });
+}
+
 // Executes an action (accept, reject, discard) for a single mail
 function mailAction(action, list, msgid, csrf_token) {
     if(list.error) return;
     var url = list.baseurl + "/admindb/" + list.name;
     if(csrf_token === undefined) {
-	$.get(url, {msgid}, function(html) {
-	    var details = parseMailDetails(msgid, html);
-	    if(details.csrf_token === undefined) return;
-	    mailAction("accept", list, msgid, details.csrf_token);
+	getMailDetails(list, msgid).then(function(details) {
+	    mailAction(action, list, msgid, details.csrf_token);
 	});
 	return;
     }
@@ -110,12 +134,14 @@ function parseMailDetails(msgid, html) {
     html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
     html = html.replace(/<\/body(.|\n)*/i,       '');
     var result = $("#result");
-    var details = {};
+    var details = null;
     result.html(html);
     if(result.find("form").length) {
-	details.csrf_token = result.find("input[name=csrf_token]").val() || '';
-	details.headers    = result.find('textarea[name="headers-' + msgid + '"]').val();
-	details.text       = result.find('textarea[name="fulltext-' + msgid + '"]').val();
+	details = {
+	    csrf_token: result.find("input[name=csrf_token]").val() || '',
+	    headers:    result.find('textarea[name="headers-'  + msgid + '"]').val(),
+	    text:       result.find('textarea[name="fulltext-' + msgid + '"]').val()
+	};
     }
     result.empty();
     return details;

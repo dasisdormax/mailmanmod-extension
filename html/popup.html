@@ -33,7 +33,7 @@
     </div>
     <div id="edit" class="roundrect hidden">
 	<h3><span>Add/Edit list</span></h3>
-	<button id="mmm-edit-cancel" class="fw grey">Cancel</button>
+	<button class="fw grey" data-cancel>Cancel</button>
 	<form>
 	    <input type="hidden" id="edit-id" value="">
 	    <label for="name">List Name</label>
@@ -44,6 +44,20 @@
 	    <input type="text" class="fw" id="edit-password" value="">
 	</form>
 	<button id="mmm-edit-save" class="fw green">Save</button>
+    </div>
+    <div id="details" class="roundrect">
+	<h3><span>Mail Details</span></h3>
+	<button class="fw grey" data-cancel>Cancel</button>
+	<p id="summary"></p>
+	<p id="headers"></p>
+	<p id="fulltext"></p>
+	<input type="hidden" id="mail-listid"    value="">
+	<input type="hidden" id="mail-msgid"     value="">
+	<input type="hidden" id="mail-csrftoken" value="">
+	<button class="fw grey"   data-mailaction="none">Do Nothing</button>
+	<button class="fw green"  data-mailaction="accept">Accept</button>
+	<button class="fw red"    data-mailaction="reject">Reject</button>
+	<button class="fw yellow" data-mailaction="discard">Discard</button>
     </div>
     <div id="result" class="hidden"></div>
     <p id="status">Loading ...</p>

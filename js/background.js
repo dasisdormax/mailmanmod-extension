@@ -52,6 +52,7 @@ var refresh = false;
 $(function(){
     var then = function() {
 	updateIcon();
+	browser.runtime.onMessage.addListener(handleMessage);
 	// Execute our background update every 60 seconds
 	setInterval(bgRefreshAll, 60000);
     };
