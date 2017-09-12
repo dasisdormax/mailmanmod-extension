@@ -58,9 +58,25 @@ label {
     display:block;
 }
 #status {
-    margin: 10px;
-    text-align:center;
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    margin: 0px;
+    padding: 10px;
     font-style:italic;
+    border-radius: 5px;
+    background-color: hsl(60,100%,75%);
+    box-shadow:0 0 20px black;
+    cursor: pointer;
+}
+#credits {
+    margin:0px;
+    padding:7px;
+    font-size:0.9em;
+    line-height:1.2;
+    text-align:center;
 }
 
 /* List display */

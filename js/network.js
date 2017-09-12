@@ -1,4 +1,22 @@
 "use strict";
+/*
+ * Mailmanmod WebExtension - manage all your mailinglists in one place
+ *
+ * Copyright (C) 2017 Maximilian Wende
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Affero GNU General Public License for more details.
+ *
+ * You should have received a copy of the Affero GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /*******************
  * Network actions *
@@ -6,6 +24,7 @@
 
 // Updates a single list object
 function refreshList(list) {
+    console.log("Refreshing list " + list.name + " ...");
     var url = list.baseurl + "/admindb/" + list.name;
     var data = {
 	adminpw:  list.password,

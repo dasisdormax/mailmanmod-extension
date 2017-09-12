@@ -1,4 +1,22 @@
 "use strict";
+/*
+ * Mailmanmod WebExtension - manage all your mailinglists in one place
+ *
+ * Copyright (C) 2017 Maximilian Wende
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Affero GNU General Public License for more details.
+ *
+ * You should have received a copy of the Affero GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /*********************************************
  * Actions that can be initiated by the user *
@@ -155,8 +173,7 @@ function renderList(list) {
     $(label).append($('<span>'));
     $(label + ">span").text(list.name);
 
-    if(!list.time || new Date().getTime() > list.time + 600000) {
-	// Refresh if the last update is more than 10 minutes ago
+    if(!list.time) {
 	refreshList(list);
     } else {
 	if(list.error) {
@@ -203,10 +220,11 @@ function renderMailDetails(list, details) {
 }
 
 function status(text) {
-    $("p#status").remove();
     if(text) {
-	$("body").append('<p id="status">');
-	$("p#status").text(text);
+	$("#status").removeClass("hidden");
+	$("#status").text(text);
+    } else {
+	$("#status").addClass("hidden");
     }
 }
 
@@ -271,6 +289,7 @@ $(function() {
     $("#mmm-import").click(importClick);
     $("#mmm-export").click(exportClick);
     $("#import-file").change(importFromFile);
+    $("#status").click(() => status(''));
     $("button[data-cancel]").click(showLists);
     $("button[data-mailaction]").click(detailActionClick);
     var then = function(){
