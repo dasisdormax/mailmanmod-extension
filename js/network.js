@@ -65,6 +65,7 @@ function getMailDetails(list, msgid) {
 		details.msgid   = msgid;
 		details.from    = mail.from;
 		details.subject = mail.subject;
+		details.time    = mail.time;
 		details.size    = mail.size;
 		resolve(details);
 	    } else {

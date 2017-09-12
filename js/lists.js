@@ -47,6 +47,18 @@ function updateList(newlist) {
     saveAll();
 };
 
+function listHasError(list) {
+    if (!list.name)
+	return "List name is empty!";
+    if (list.baseurl.search(/^https?:\/\//) !== 0)
+	return "Base URL does not contain a protocol (http:// or https://)";
+    if (list.baseurl.indexOf("*") !== -1)
+	return "Base URL contains illegal characters!";
+    if (!list.password)
+	return "List password is empty!"
+    return null;
+}
+
 /****************
  * List storage *
  ****************/

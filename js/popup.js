@@ -103,11 +103,9 @@ function editSaveClick() {
     list.password = $('#edit-password').val();
 	
     // Validate
-    if(list.name.length < 1 || list.baseurl.search(/^https?:\/\//) < 0 || list.baseurl.indexOf("*") >= 0) {
-	status(
-	    "Validation failed! Please make sure to specify a list name and " +
-	    "the protocol of the base URL (http or https)."
-	);
+    var error;
+    if(error = listHasError(list)) {
+	status(error);
     } else {
 	updateList(list);
 	showLists();
@@ -116,22 +114,33 @@ function editSaveClick() {
 
 function importFromFile() {
     var file = this.files[0];
-    if(!file || file.type.search(/json/) < 0) return;
+    if(!file || file.type.search(/json/) < 0) {
+	status("Invalid filetype! Only JSON files are allowed.");
+	return;
+    }
+    // Read file contents using FileReader
     var reader = new FileReader();
     reader.onload = function(event){
-	var json = event.target.result;
-	var parsed = JSON.parse(json);
-	if(!Array.isArray(parsed)) return;
-	var tmp = [];
-	parsed.forEach(function(list) {
-	    var newlist = newList();
-	    newlist.name     = list.name;
-	    newlist.baseurl  = list.baseurl;
-	    newlist.password = list.password;
-	    tmp.push(newlist);
-	});
-	lists = tmp;
-	saveAll();
+	try {
+	    var json = event.target.result;
+	    var parsed = JSON.parse(json);
+	    if(!Array.isArray(parsed)) throw 5;
+	    var tmp = [];
+	    parsed.forEach(function(list) {
+		if(listHasError(list)) throw 5;
+		var newlist = newList();
+		newlist.name     = list.name;
+		newlist.baseurl  = list.baseurl;
+		newlist.password = list.password;
+		tmp.push(newlist);
+	    });
+	    lists = tmp;
+	    status("Imported " + lists.length + " lists.");
+	    saveAll();
+	    showLists();
+	} catch(ex) {
+	    status("The provided file contains invalid data!");
+	}
     };
     reader.readAsText(file);
 }
@@ -147,7 +156,7 @@ function exportClick() {
 	baseurl: list.baseurl,
 	password: list.password
     }));
-    var json = JSON.stringify(tmp);
+    var json = JSON.stringify(tmp, null, 2);
     var url = "data:text/json;base64," + btoa(json);
     download(url, "mmm.json", "text/json");
 }
@@ -210,8 +219,13 @@ function renderMailDetails(list, details) {
     $("#summary>strong").text(details.subject);
     $("#summary").append($('<br>'));
     $("#summary").append("From: " + details.from);
+    $("#summary").append($('<br>'));
+    $("#summary").append("Received: " + details.time);
     $("#headers").text(details.headers);
-    var text = details.text.replace(/<[a-zA-Z\/][^>]*(>|$)/g,'');
+    var text = details.text;
+    text = text.replace(/<style[^<]*/i,'');            // Remove content of <style> elements
+    text = text.replace(/<[a-zA-Z!\/][^>]*(>|$)/g,''); // Remove HTML tags
+    text = text.trim();                                // Remove leading and trailing whitespace
     $("#fulltext").text(text);
     $("#mail-listid").val(list.id);
     $("#mail-msgid").val(details.msgid);
