@@ -1,3 +1,0 @@
-[submodule "js/downloadjs"]
-	path = extern/downloadjs
-	url = https://github.com/rndme/download.git

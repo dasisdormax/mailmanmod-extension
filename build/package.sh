@@ -30,8 +30,10 @@ FILES=(
     js/popup.js
     icons/mmm-192.png
     icons/mmm-96.png
-    extern/downloadjs/download.min.js
+    extern/downloadjs/download.js
     extern/downloadjs/LICENSE.md
+    extern/jquery/jquery-3.2.1.min.js
+    extern/jquery/LICENSE.txt
 )
 
 cd $(dirname $0)
