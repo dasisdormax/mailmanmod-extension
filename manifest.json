@@ -12,8 +12,6 @@
 	}
     },
 
-    "content_security_policy": "script-src 'self'; object-src 'self'",
-    
     "icons": {
 	"96": "icons/mmm-96.png",
 	"192": "icons/mmm-192.png"
@@ -27,6 +25,10 @@
 
     "background": {
 	"page": "html/background.html"
+    },
+
+    "options_ui": {
+	"page": "html/options.html"
     },
 
     "permissions": [

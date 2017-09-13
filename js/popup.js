@@ -112,53 +112,8 @@ function editSaveClick() {
     }
 }
 
-function importFromFile() {
-    var file = this.files[0];
-    if(!file || file.type.search(/json/) < 0) {
-	status("Invalid filetype! Only JSON files are allowed.");
-	return;
-    }
-    // Read file contents using FileReader
-    var reader = new FileReader();
-    reader.onload = function(event){
-	try {
-	    var json = event.target.result;
-	    var parsed = JSON.parse(json);
-	    if(!Array.isArray(parsed)) throw 5;
-	    var tmp = [];
-	    parsed.forEach(function(list) {
-		if(listHasError(list)) throw 5;
-		var newlist = newList();
-		newlist.name     = list.name;
-		newlist.baseurl  = list.baseurl;
-		newlist.password = list.password;
-		tmp.push(newlist);
-	    });
-	    lists = tmp;
-	    status("Imported " + lists.length + " lists.");
-	    saveAll();
-	    showLists();
-	} catch(ex) {
-	    status("The provided file contains invalid data!");
-	}
-    };
-    reader.readAsText(file);
-}
-
-function importClick() {
-    $("#import-file").click();
-}
-
-function exportClick() {
-    var tmp = [];
-    lists.forEach((list) => tmp.push({
-	name: list.name,
-	baseurl: list.baseurl,
-	password: list.password
-    }));
-    var json = JSON.stringify(tmp, null, 2);
-    var url = "data:text/json;base64," + btoa(json);
-    download(url, "mmm.json", "text/json");
+function optionsClick() {
+    browser.runtime.openOptionsPage();
 }
 
 /*************
@@ -223,9 +178,10 @@ function renderMailDetails(list, details) {
     $("#summary").append("Received: " + details.time);
     $("#headers").text(details.headers);
     var text = details.text;
-    text = text.replace(/<style[^<]*/i,'');            // Remove content of <style> elements
-    text = text.replace(/<[a-zA-Z!\/][^>]*(>|$)/g,''); // Remove HTML tags
-    text = text.trim();                                // Remove leading and trailing whitespace
+    text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements
+    text = text.replace(/<[a-zA-Z!\/-][^>]*(>|$)/g,''); // Remove HTML tags and comments
+    text = text.replace(/\n\s+\n/g,"\n\n");             // Remove unnecessary whitespace and linebreaks
+    text = text.trim();                                 // Remove leading and trailing whitespace
     $("#fulltext").text(text);
     $("#mail-listid").val(list.id);
     $("#mail-msgid").val(details.msgid);
@@ -300,9 +256,7 @@ function handleMessage(msg) {
 $(function() {
     $("#mmm-list-perform-action").click(listActionClick);
     $("#mmm-edit-save").click(editSaveClick);
-    $("#mmm-import").click(importClick);
-    $("#mmm-export").click(exportClick);
-    $("#import-file").change(importFromFile);
+    $("#mmm-options").click(optionsClick);
     $("#status").click(() => status(''));
     $("button[data-cancel]").click(showLists);
     $("button[data-mailaction]").click(detailActionClick);

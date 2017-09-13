@@ -2,9 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/html/popup.css">
+    <link rel="stylesheet" href="/css/popup.css">
     <script src="/extern/jquery/jquery-3.2.1.min.js"></script>
-    <script src="/extern/downloadjs/download.js"></script>
     <script src="/js/lists.js"></script>
     <script src="/js/network.js"></script>
     <script src="/js/popup.js"></script>
@@ -24,8 +23,7 @@
 	    <button id="mmm-list-perform-action" class="fw blue">Perform selected action!</button>
 	</div>
 	<div class="clearfix">
-	    <button id="mmm-import" class="hw yellow">Import</button>
-	    <button id="mmm-export" class="hw green">Export</button>
+	    <button id="mmm-options" class="fw grey">About &amp; Options</button>
 	</div>
     </div>
     <div id="edit" class="roundrect hidden">
@@ -56,14 +54,7 @@
 	<button class="fw red"    data-mailaction="reject">Reject</button>
 	<button class="fw yellow" data-mailaction="discard">Discard</button>
     </div>
-    <p id="credits">
-	&copy; 2017 Maximilian Wende<br>
-	<a href="https://github.com/dasisdormax/mailmanmod-webextension">Mailmanmod WebExtension</a>
-	is licensed under the <a href="/agpl-3.0.txt">GNU AGPLv3</a> or later<br>
-	Used libraries: <a href="https://jquery.com">jQuery</a>, <a href="http://danml.com/download.html">download.js</a>
-    </p>
     <div id="result" class="hidden"></div>
-    <input id="import-file" type="file" class="hidden">
     <p id="status">Loading ...</p>
 </body>
 </html>

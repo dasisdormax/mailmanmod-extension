@@ -1,0 +1,33 @@
+.hidden {
+    display: none;
+}
+div {
+    position: relative;
+    overflow: auto;
+    width: 300px;
+    margin: 0px auto;
+}
+button {
+    text-align: center;
+    display: block;
+    float: left;
+    width: 130px;
+    margin: 10px;
+}
+#status {
+    width: 400px;
+    max-width: 85%;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    background-color: hsl(60,100%,75%);
+    box-shadow:0 0 20px black;
+    cursor: pointer;
+}
+#credits {
+    margin:0px;
+    padding:7px;
+    line-height:1.2;
+    text-align:center;
+}

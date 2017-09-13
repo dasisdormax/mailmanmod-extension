@@ -36,20 +36,6 @@ button {
     padding:5px;
     transition:background-color .2s linear;
 }
-.fw {
-    width:100%;
-}
-.hw {
-    width:50%;
-    float:left;
-    margin:0;
-}
-.clearfix {
-    overflow:auto;
-}
-.hidden {
-    display:none;
-}
 form {
     margin: 8px;
 }
@@ -71,15 +57,8 @@ label {
     box-shadow:0 0 20px black;
     cursor: pointer;
 }
-#credits {
-    margin:0px;
-    padding:7px;
-    font-size:0.9em;
-    line-height:1.2;
-    text-align:center;
-}
 
-/* List display */
+/* LIST OVERVIEW */
 #mmm-lists {
     margin-top:-12px;
     padding:8px;
@@ -113,7 +92,8 @@ span::before, span::after {
     padding:10px;
     margin:0px;
 }
-/* mail details */
+
+/* MAIL DETAILS */
 #headers, #fulltext {
     white-space: pre-wrap;
 }
@@ -130,7 +110,23 @@ span::before, span::after {
     content: 'CONTENT (shortened)';
 }
 
-/* buttons */
+/* BOX CONTROL */
+.fw {
+    width:100%;
+}
+.hw {
+    width:50%;
+    float:left;
+    margin:0;
+}
+.clearfix {
+    overflow:auto;
+}
+.hidden {
+    display:none;
+}
+
+/* COLORS */
 .grey {
     background-color:hsla(0,0%,70%,.3);
 }
