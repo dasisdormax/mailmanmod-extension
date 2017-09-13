@@ -1,7 +1,7 @@
 # Mailmanmod WebExtension
 Manage and moderate all your mailman lists in one place
 
-![Main panel example](/example.png)
+<img title="Main panel example" src="example.png" width="450px">
 
 ## WARNING
 This extension was created and tested only with one server (mailman v2.1.23, german language)
@@ -19,5 +19,5 @@ with a test installation, i'll try my best to update this extension for it.
 
 ## Limitations
 - Mailman v2 only
-- Assumes that the moderation interface is located at *<baseurl>*/admindb/*<listname>*, which may or may not be the case for you
+- Assumes that the moderation interface is located at *&lt;baseurl&gt;*/admindb/*&lt;listname&gt;*, which may or may not be the case for you
 - Only available in English
