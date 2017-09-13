@@ -22,11 +22,14 @@ FILES=(
     manifest.json
     agpl-3.0.txt
     html/background.html
+    html/options.html
     html/popup.html
-    html/popup.css
+    css/options.css
+    css/popup.css
     js/lists.js
     js/network.js
     js/background.js
+    js/options.js
     js/popup.js
     icons/mmm-192.png
     icons/mmm-96.png

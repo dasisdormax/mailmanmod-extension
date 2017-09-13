@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "mailmanmod",
-    "version": "0.2.0",
+    "version": "0.3.0",
 
     "description": "Manage and moderate all your mailman lists at once",
     "homepage_url": "https://github.com/dasisdormax/mailmanmod-webextension",
