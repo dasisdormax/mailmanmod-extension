@@ -63,12 +63,12 @@ function listHasError(list) {
  * List storage *
  ****************/
 
-// Load all lists from the addon storage
-// Usage: loadAll().then(onSuccess, onError);
-function loadAll() {
-    return storage.get('lists').then(function(result){
+// Load all lists from the addon storage and execute function then when done
+function loadAllAnd(then) {
+    storage.get('lists', function(result){
 	result = result['lists'];
 	if(Array.isArray(result)) lists = result; 
+	then();
     });
 };
 
@@ -76,7 +76,7 @@ function saveAll() {
     // Sort lists by list name
     lists.sort((a,b) => a.name > b.name ? 1 : -1);
     // Sync to persistent storage and background task
-    var setting = storage.set({lists}).then(invalidateLists);
+    storage.set({lists}, invalidateLists);
     updateIcon();
 }
 
@@ -84,13 +84,13 @@ function updateIcon() {
     // Count total mails and update browser action
     var mails = 0;
     lists.forEach((list) => mails += list.mails.length);
-    browser.browserAction.setBadgeBackgroundColor({color: "red"});
-    browser.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
+    chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+    chrome.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
 }
 
 // Background task and popup notify each other of changes of the lists object
 function invalidateLists() {
-    browser.runtime.sendMessage({
+    chrome.runtime.sendMessage({
 	action: 'invalidateLists'
     });
 }
@@ -98,5 +98,5 @@ function invalidateLists() {
 /***********
  * GLOBALS *
  ***********/
-var storage = browser.storage.sync || browser.storage.local;
+var storage = chrome.storage.sync || chrome.storage.local;
 var lists = [];

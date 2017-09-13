@@ -113,7 +113,7 @@ function editSaveClick() {
 }
 
 function optionsClick() {
-    browser.runtime.openOptionsPage();
+    chrome.runtime.openOptionsPage();
 }
 
 /*************
@@ -245,7 +245,7 @@ function handleMessage(msg) {
 	case 'renderList':
 	    renderList(msg.list); break;
 	case 'invalidateLists':
-	    loadAll().then(renderAll); break;
+	    loadAllAnd(renderAll); break;
 	default:
     }
 }
@@ -262,8 +262,8 @@ $(function() {
     $("button[data-mailaction]").click(detailActionClick);
     var then = function(){
 	// Listen to list updates from the background task
-	browser.runtime.onMessage.addListener(handleMessage);
+	chrome.runtime.onMessage.addListener(handleMessage);
 	showLists();
     }
-    loadAll().then(then, then);
+    loadAllAnd(then);
 });

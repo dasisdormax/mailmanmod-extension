@@ -74,12 +74,11 @@ function openFileChooser() {
 
 function beginImport() {
     var file = this.files[0];
-    var then = () => doImport(file);
-    loadAll().then(then, then);
+    loadAllAnd(() => doImport(file));
 }
 
 function beginExport() {
-    loadAll().then(doExport);
+    loadAllAnd(doExport);
 }
 
 function status(text) {

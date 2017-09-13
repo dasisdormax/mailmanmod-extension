@@ -20,7 +20,7 @@
 
 // a "dummy" renderList function
 function renderList(list) {
-    browser.runtime.sendMessage({
+    chrome.runtime.sendMessage({
 	action: "renderList",
 	list
     });
@@ -31,27 +31,25 @@ function renderList(list) {
  *******************/
 function bgRefreshAll() {
     if(refresh) {
-	loadAll().then(function() {
+	loadAllAnd(function() {
 	    refresh = false;
 	    bgRefreshAll();
 	});
 	return;
     }
-    var time = new Date().getTime();
-    // sort list so we refresh the most outdated list first
+
+    // the sorting makes sure that the oldest lists are updated first
     var sorted = lists.sort((a, b) => a.time > b.time ? 1 : -1);
+    var time = new Date().getTime();
     for(let i = 0; i < sorted.length; i++) {
-	// Background update with a lower frequency -> once every 20 minutes
 	let list = sorted[i];
 	let diff = list.time ? time - list.time : 1e12;
-	if(diff > 1200000) {
-	    refreshList(list);
-	    // Don't update more than one list in one go, except if
-	    // they are seriously outdated (more than 50 minutes)
-	    if(diff < 3000000) {
-		return;
-	    }
-	}
+
+	// Background update with a lower frequency -> once every 20 minutes
+	if(diff > 1200000) refreshList(list);
+	// Don't update more than one list in one go, except if they
+	// are 'seriously outdated' (currently, more than 50 minutes)
+	if(diff < 3000000) return;
     }
 }
 
@@ -74,10 +72,9 @@ var refresh = false;
 $(function(){
     var then = function() {
 	updateIcon();
-	browser.runtime.onMessage.addListener(handleMessage);
+	chrome.runtime.onMessage.addListener(handleMessage);
 	// Execute our background update every 2 minutes
 	setInterval(bgRefreshAll, 120000);
     };
-    // NOTE: we have to execute our 'then' function whether loadAll succeeds or not
-    loadAll().then(then, then);
+    loadAllAnd(then);
 });
