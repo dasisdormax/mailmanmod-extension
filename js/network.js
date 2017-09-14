@@ -117,12 +117,20 @@ function mailAction(action, list, msgid, csrf_token) {
 /**********************
  * XHR Result Parsers *
  **********************/
-function parseAdmindb(list, html) {
+function prepareHtml(html) {
     // Remove everything except the body contents
     html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
     html = html.replace(/<\/body(.|\n)*/i,       '');
+    // Remove external content, such as scripts and images
+    html = html.replace(/<img[^>]*>/gi,                   '');
+    html = html.replace(/<script(\n|.)*?(\/script>|$)/gi, '');
+    html = html.replace(/<iframe(\n|.)*?(\/iframe>|$)/gi, '');
+    return html;
+}
+
+function parseAdmindb(list, html) {
     var result = $("#result");
-    result.html(html);
+    result.html(prepareHtml(html));
     list.time = new Date().getTime();
     list.mails = [];
     if(result.find("form").length) {
@@ -150,12 +158,9 @@ function parseAdmindb(list, html) {
 }
 
 function parseMailDetails(msgid, html) {
-    // Remove everything except the body contents
-    html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
-    html = html.replace(/<\/body(.|\n)*/i,       '');
     var result = $("#result");
     var details = null;
-    result.html(html);
+    result.html(prepareHtml(html));
     if(result.find("form").length) {
 	details = {
 	    csrf_token: result.find("input[name=csrf_token]").val() || '',
