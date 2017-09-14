@@ -69,6 +69,8 @@ function getMailDetails(list, msgid) {
 		details.size    = mail.size;
 		resolve(details);
 	    } else {
+		// That e-mail has already been moderated
+		refreshList(list);
 		reject();
 	    }
 	}).fail(function() {
@@ -81,6 +83,8 @@ function getMailDetails(list, msgid) {
 function mailAction(action, list, msgid, csrf_token) {
     if(list.error) return;
     var url = list.baseurl + "/admindb/" + list.name;
+
+    // Get a CSRF Token before proceeding
     if(csrf_token === undefined) {
 	getMailDetails(list, msgid).then(function(details) {
 	    mailAction(action, list, msgid, details.csrf_token);
@@ -161,7 +165,7 @@ function parseMailDetails(msgid, html) {
     var result = $("#result");
     var details = null;
     result.html(prepareHtml(html));
-    if(result.find("form").length) {
+    if(result.find("textarea").length) {
 	details = {
 	    csrf_token: result.find("input[name=csrf_token]").val() || '',
 	    headers:    result.find('textarea[name="headers-'  + msgid + '"]').val(),
