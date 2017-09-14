@@ -18,7 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// a "dummy" renderList function
+// Instead of rendering the list ourselves, we send it to the popup
+// to render it for us
 function renderList(list) {
     chrome.runtime.sendMessage({
 	action: "renderList",
@@ -59,6 +60,8 @@ function bgRefreshAll() {
 function handleMessage(msg) {
     switch(msg.action) {
 	case 'invalidateLists':
+	    // Note that the lists have been modified externally.
+	    // We will refresh them before the next background update
 	    refresh = true; break;
 	default:
     }

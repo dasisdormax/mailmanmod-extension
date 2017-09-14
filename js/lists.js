@@ -22,6 +22,7 @@
  * List operations *
  *******************/
 function newList(id) {
+    // Generate a random ID string
     id = id || new Date().getTime().toString(36) + Math.floor(Math.random() * 1.e9).toString(36);
     return {
 	id,
@@ -38,6 +39,7 @@ function getListById(id) {
 }
 
 function updateList(newlist) {
+    // Add or update a list to the global lists array
     var index = lists.findIndex((list) => list.id == newlist.id);
     if(index >= 0) {
 	lists[index] = newlist;
@@ -46,6 +48,10 @@ function updateList(newlist) {
     }
     saveAll();
 };
+
+function listUrl(list) {
+    return list.baseurl + "/admindb/" + list.name;
+}
 
 function listHasError(list) {
     if (!list.name)
@@ -80,8 +86,8 @@ function saveAll() {
     updateIcon();
 }
 
+// Count total mails and update browser action
 function updateIcon() {
-    // Count total mails and update browser action
     var mails = 0;
     lists.forEach((list) => mails += list.mails.length);
     chrome.browserAction.setBadgeBackgroundColor({color: "red"});

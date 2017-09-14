@@ -22,8 +22,8 @@
 /*******************
  * IMPORT / EXPORT *
  *******************/
-// NOTE: These functions are here as opening the file chooser
-// closes and invalidates the popup
+// NOTE: we cannot put these function into the popup directly as it would
+// get closed when opening the file chooser dialog
 
 function doImport(file) {
     if(!file || file.type.search(/json/) < 0) {
@@ -47,7 +47,7 @@ function doImport(file) {
 		tmp.push(newlist);
 	    });
 	    lists = tmp;
-	    status("Imported " + lists.length + " lists.");
+	    status("Import successful! Imported Lists: " + lists.length);
 	    saveAll();
 	} catch(ex) {
 	    status("The provided file contains invalid data!");
@@ -57,6 +57,8 @@ function doImport(file) {
 }
 
 function doExport() {
+    // Create temporary array to store only
+    // the important properties for each list
     var tmp = [];
     lists.forEach((list) => tmp.push({
 	name: list.name,
@@ -64,8 +66,9 @@ function doExport() {
 	password: list.password
     }));
     var json = JSON.stringify(tmp, null, 2);
-    var url = "data:text/json;base64," + btoa(json);
-    download(url, "mmm.json", "text/json");
+    // Create data url to download the JSON from
+    var dataurl = "data:text/json;base64," + btoa(json);
+    download(dataurl, "mmm.json", "text/json");
 }
 
 function openFileChooser() {

@@ -25,7 +25,7 @@
 // Updates a single list object
 function refreshList(list) {
     console.log("Refreshing list " + list.name + " ...");
-    var url = list.baseurl + "/admindb/" + list.name;
+    var url = listUrl(list);
     var data = {
 	adminpw:  list.password,
 	admlogin: "Login"
@@ -53,7 +53,7 @@ function refreshList(list) {
 // gets mail details asynchronously
 // Usage: getMailDetails(list, msgid).then(callback);
 function getMailDetails(list, msgid) {
-    var url = list.baseurl + "/admindb/" + list.name;
+    var url = listUrl(list);
     // return a promise that resolves with the details object
     // if the response could be parsed correctly
     return new Promise((resolve, reject) => {
@@ -82,7 +82,7 @@ function getMailDetails(list, msgid) {
 // Executes an action (accept, reject, discard) for a single mail
 function mailAction(action, list, msgid, csrf_token) {
     if(list.error) return;
-    var url = list.baseurl + "/admindb/" + list.name;
+    var url = listUrl(list);
 
     // Get a CSRF Token before proceeding
     if(csrf_token === undefined) {
@@ -91,6 +91,8 @@ function mailAction(action, list, msgid, csrf_token) {
 	});
 	return;
     }
+
+    // Convert action into its numeric value
     var value = 0;
     switch(action) {
 	case "accept":
@@ -110,8 +112,10 @@ function mailAction(action, list, msgid, csrf_token) {
     }
     data[msgid] = value;
     console.log(data);
+
+    // Send data to the server
     $.post(url, data, function(html) {
-	// We can directly parse the result and update the list object
+	// We can directly parse the result and update the list object with it
 	parseAdmindb(list, html);
 	saveAll();
 	renderList(list);
@@ -121,6 +125,8 @@ function mailAction(action, list, msgid, csrf_token) {
 /**********************
  * XHR Result Parsers *
  **********************/
+
+// prepare the HTML before inserting it into the result div
 function prepareHtml(html) {
     // Remove everything except the body contents
     html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
@@ -144,8 +150,14 @@ function parseAdmindb(list, html) {
 	    // Parse individual mail entries
 	    $(this).find("table table table").each(function(){
 		var mlink = $(this).find("a");
-		if(!mlink.length) return;
+		if(!mlink.length) {
+		    // E-mails have an anchor that points to the message detail page
+		    // Checking for this, we filter out all tables that don't
+		    // correspond to an actual e-mail
+		    return;
+		}
 		var msgid = mlink.attr("href").match(/[0-9]+$/)[0];
+		// The last column contains the information we need
 		var data  = $(this).find("td:last-child");
 		var mail  = {
 		    msgid,
@@ -165,6 +177,7 @@ function parseMailDetails(msgid, html) {
     var result = $("#result");
     var details = null;
     result.html(prepareHtml(html));
+    // By checking for the textarea, we know if the mail has already been moderated or not
     if(result.find("textarea").length) {
 	details = {
 	    csrf_token: result.find("input[name=csrf_token]").val() || '',

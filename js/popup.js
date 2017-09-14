@@ -23,8 +23,8 @@
  *********************************************/
 function actionNew(id) {
     var newlist = newList();
-    var oldlist = id ? getListById(id) : lists[0];
-    if(oldlist) {
+    if(id || lists.length > 0) {
+	let oldlist = id ? getListById(id) : lists[0];
 	newlist.name     = oldlist.name;
 	newlist.baseurl  = oldlist.baseurl;
 	newlist.password = oldlist.password;
@@ -51,10 +51,13 @@ function actionDelete(id) {
 }
 
 function actionRefresh() {
+    // Resetting list.time will cause the list to be refreshed
+    // when rendering the next time
     lists.forEach((list) => {list.time = null;});
     showLists();
 }
 
+// Execute an action on the selected mailinglist
 function listActionClick() {
     var id = $("input[name=listid]:checked").val();
     var action = $("#mmm-select-action").val();
@@ -73,6 +76,7 @@ function listActionClick() {
     }
 }
 
+// Accept an e-mail directly from the main panel
 function mailAcceptClick() {
     var div   = $(this).parents(".mail");
     var list  = getListById(div.attr("data-listid"));
@@ -80,6 +84,7 @@ function mailAcceptClick() {
     mailAction("accept", list, msgid);
 }
 
+// Open the details view for a specifc e-mail
 function mailDetailsClick() {
     var div   = $(this).parents(".mail");
     var list  = getListById(div.attr("data-listid"));
@@ -87,6 +92,7 @@ function mailDetailsClick() {
     getMailDetails(list, msgid).then((details) => renderMailDetails(list, details));
 }
 
+// Execute an action on a specific mail from its detail page
 function detailActionClick() {
     var list       = getListById($("#mail-listid").val());
     var msgid      = $("#mail-msgid").val();
@@ -96,6 +102,7 @@ function detailActionClick() {
     showLists();
 }
 
+// Save the changes made to a mailinglist on the edit/create page
 function editSaveClick() {
     var list      = newList($('#edit-id').val());
     list.name     = $('#edit-name').val().trim();
@@ -112,6 +119,7 @@ function editSaveClick() {
     }
 }
 
+// Opens the About & Options Page
 function optionsClick() {
     chrome.runtime.openOptionsPage();
 }
@@ -174,6 +182,8 @@ function renderMailDetails(list, details) {
     $("#summary>strong").text(details.subject);
     $("#summary").append($('<br>'));
     $("#summary").append("From: " + details.from);
+    $("#summary").append($('<br>'));
+    $("#summary").append("Size: " + details.time + " Bytes");
     $("#summary").append($('<br>'));
     $("#summary").append("Received: " + details.time);
     $("#headers").text(details.headers);
