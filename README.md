@@ -21,3 +21,16 @@ with a test installation, i'll try my best to update this extension for it.
 - Mailman v2 only
 - Assumes that the moderation interface is located at *&lt;baseurl&gt;*/admindb/*&lt;listname&gt;*, which may or may not be the case for you
 - Only available in English
+
+## Installation
+
+### Firefox (current / ESR 52)
+- Clone this repository
+- In Firefox, enter the URL `about:debugging`
+- Click 'Load temporary add-on' and select the file 'manifest.json'
+
+### Chromium / Google Chrome
+- Clone this repository
+- Open the Chrome menu and go to 'More Tools > Extensions'
+- Enable Developer Mode and click 'Load unpacked extension'
+- Select the folder you cloned this repository to

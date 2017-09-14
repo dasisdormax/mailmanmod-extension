@@ -22,14 +22,9 @@
  * Actions that can be initiated by the user *
  *********************************************/
 function actionNew(id) {
-    var newlist = newList();
-    if(id || lists.length > 0) {
-	let oldlist = id ? getListById(id) : lists[0];
-	newlist.name     = oldlist.name;
-	newlist.baseurl  = oldlist.baseurl;
-	newlist.password = oldlist.password;
-    }
-    showEditForm(newlist);
+    var first   = lists.length > 0 ? lists[0] : null;
+    var current = id ? getListById(id) : null;
+    showEditForm(copyList(current || first));
 }
 
 function actionEdit(id) {
@@ -104,14 +99,16 @@ function detailActionClick() {
 
 // Save the changes made to a mailinglist on the edit/create page
 function editSaveClick() {
-    var list      = newList($('#edit-id').val());
-    list.name     = $('#edit-name').val().trim();
-    list.baseurl  = $('#edit-baseurl').val().trim().replace(/\/+$/,"");
-    list.password = $('#edit-password').val();
-	
+    var list = copyList({
+	name:     $('#edit-name').val().trim(),
+	baseurl:  $('#edit-baseurl').val().trim().replace(/\/+$/,""),
+	password: $('#edit-password').val()
+    });
+    list.id = $('#edit-id').val();
+
     // Validate
-    var error;
-    if(error = listHasError(list)) {
+    var error = listHasError(list);
+    if(error) {
 	status(error);
     } else {
 	updateList(list);
@@ -183,7 +180,7 @@ function renderMailDetails(list, details) {
     $("#summary").append($('<br>'));
     $("#summary").append("From: " + details.from);
     $("#summary").append($('<br>'));
-    $("#summary").append("Size: " + details.time + " Bytes");
+    $("#summary").append("Size: " + details.size + " Bytes");
     $("#summary").append($('<br>'));
     $("#summary").append("Received: " + details.time);
     $("#headers").text(details.headers);
@@ -254,8 +251,6 @@ function handleMessage(msg) {
     switch(msg.action) {
 	case 'renderList':
 	    renderList(msg.list); break;
-	case 'invalidateLists':
-	    loadAllAnd(renderAll); break;
 	default:
     }
 }

@@ -34,6 +34,16 @@ function newList(id) {
     };
 };
 
+function copyList(src) {
+    var dest = newList();
+    if(src) {
+	dest.name     = src.name;
+	dest.baseurl  = src.baseurl;
+	dest.password = src.password;
+    }
+    return dest;
+}
+
 function getListById(id) {
     return lists.find((list) => list.id == id) || newList(id);
 }
@@ -71,9 +81,27 @@ function listHasError(list) {
 
 // Load all lists from the addon storage and execute function then when done
 function loadAllAnd(then) {
-    storage.get('lists', function(result){
-	result = result['lists'];
-	if(Array.isArray(result)) lists = result; 
+    var tmpStorage = storage || chrome.storage.sync || chrome.storage.local;
+    tmpStorage.get(null, function(items){
+	// Error handling
+	if(chrome.runtime.lastError) {
+	    if(storage) {
+		status("Error accessing storage: " + chrome.runtime.lastError.message);
+		return;
+	    }
+	    // If the sync storage fails, try again using the local storage
+	    // Older Firefoxes will advertize sync support, but fail with a runtime error
+	    storage = chrome.storage.local;
+	    loadAllAnd(then);
+	    return;
+	}
+	storage = tmpStorage;
+
+	// Read data from the storage
+	if(items && Array.isArray(items['lists']))
+	    lists = items['lists'];
+
+	// Execute callback
 	then();
     });
 };
@@ -82,7 +110,10 @@ function saveAll() {
     // Sort lists by list name
     lists.sort((a,b) => a.name > b.name ? 1 : -1);
     // Sync to persistent storage and background task
-    storage.set({lists}, invalidateLists);
+    storage.set({lists}, function() {
+	if(chrome.runtime.lastError)
+	    status("Error writing to storage: " + chrome.runtime.lastError.message);
+    });
     updateIcon();
 }
 
@@ -94,15 +125,8 @@ function updateIcon() {
     chrome.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
 }
 
-// Background task and popup notify each other of changes of the lists object
-function invalidateLists() {
-    chrome.runtime.sendMessage({
-	action: 'invalidateLists'
-    });
-}
-
 /***********
  * GLOBALS *
  ***********/
-var storage = chrome.storage.sync || chrome.storage.local;
+var storage;
 var lists = [];

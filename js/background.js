@@ -24,7 +24,15 @@ function renderList(list) {
     chrome.runtime.sendMessage({
 	action: "renderList",
 	list
+    }, function() {
+	// Suppress error unchecked messages. We expect the communication
+	// to fail when the popup is not open.
+	return chrome.runtime.lastError;
     });
+}
+
+function status(text) {
+    if(text) console.log(text);
 }
 
 /*******************
@@ -57,14 +65,10 @@ function bgRefreshAll() {
 /*****************
  * COMMUNICATION *
  *****************/
-function handleMessage(msg) {
-    switch(msg.action) {
-	case 'invalidateLists':
-	    // Note that the lists have been modified externally.
-	    // We will refresh them before the next background update
-	    refresh = true; break;
-	default:
-    }
+// Note that the lists have been modified externally.
+// We will refresh them before the next background update
+function handleStorageChange(change, area) {
+    refresh = true;
 }
 
 /******************
@@ -75,7 +79,7 @@ var refresh = false;
 $(function(){
     var then = function() {
 	updateIcon();
-	chrome.runtime.onMessage.addListener(handleMessage);
+	chrome.storage.onChanged.addListener(handleStorageChange);
 	// Execute our background update every 2 minutes
 	setInterval(bgRefreshAll, 120000);
     };
