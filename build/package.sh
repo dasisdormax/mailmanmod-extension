@@ -21,6 +21,8 @@
 FILES=(
     manifest.json
     agpl-3.0.txt
+    _locales/en/messages.json
+    _locales/de/messages.json
     html/background.html
     html/options.html
     html/popup.html
