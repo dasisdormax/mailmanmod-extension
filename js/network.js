@@ -38,11 +38,11 @@ function refreshList(list) {
     }).fail(function(request){
 	switch(request.status) {
 	    case 401:
-		list.error = 'badpass'; break;
+		list.error = 'listErrBadPassword'; break;
 	    case 404:
-		list.error = 'notfound'; break;
+		list.error = 'listErrNotFound'; break;
 	    default:
-		list.error = 'unknown';
+		list.error = 'listErrUnknown';
 	}
 	list.time = new Date().getTime();
 	saveAll();

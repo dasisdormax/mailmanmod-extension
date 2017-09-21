@@ -3,37 +3,39 @@
 }
 html {
     overflow-x: hidden;
+    font: 15px sans-serif black;
+    background-color: hsl(0,0%,98%);
 }
 body {
-    margin:0px;
+    margin: 0px;
     font-family: sans-serif;
     width: 540px;
     max-width: 100%;
 }
 .roundrect {
-    margin:16px 7px 7px;
-    border:solid 1px hsl(0,0%,70%);
-    border-radius:9px;
+    margin: 16px 7px 7px;
+    border: solid 1px hsl(0,0%,70%);
+    border-radius: 9px;
 }
 .roundrect > button:last-child {
-    border-bottom-left-radius:7px;
-    border-bottom-right-radius:7px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 .roundrect h3 {
-    position:relative;
-    text-align:center;
-    transform:translateY(-50%);
-    margin:0px auto;
+    position: relative;
+    text-align: center;
+    transform: translateY(-50%);
+    margin: 0px auto;
 }
 .roundrect h3 span {
-    color:hsl(0,0%,20%);
-    background-color:white;
-    padding:0px 8px;
+    color: hsl(0,0%,20%);
+    background-color: hsl(0,0%,98%);
+    padding: 0px 8px;
 }
 button {
-    cursor:pointer;
-    border:none;
-    padding:5px;
+    cursor: pointer;
+    border: none;
+    padding: 5px;
     transition:background-color .2s linear;
 }
 form {
@@ -41,7 +43,7 @@ form {
 }
 label {
     margin: 6px 0 2px;
-    display:block;
+    display: block;
 }
 #status {
     position: fixed;
@@ -54,106 +56,86 @@ label {
     text-align: center;
     border-radius: 5px;
     background-color: hsl(60,100%,75%);
-    box-shadow:0 0 20px black;
+    box-shadow: 0 0 20px black;
     cursor: pointer;
 }
 
 /* LIST OVERVIEW */
 #mmm-lists {
-    margin-top:-12px;
-    padding:8px;
+    margin-top: -12px;
+    padding: 8px;
 }
-span::before, span::after {
-    font-size:.7em;
-    color:hsl(0,0%,40%);
+label > span {
+    font-size: .7em;
+    color: hsl(0,0%,45%);
 }
-#mmm-lists div:not([data-mails]):not([data-err]) span::before {
-    content: '__MSG_listLoading__';
-}
-#mmm-lists div[data-mails="0"] span::after {
-    content: '__MSG_listNoMessages__';
-}
-#mmm-lists div[data-err] span::after {
+label > span.error {
     color: red;
-    content: '__MSG_listErrUnknown__';
-}
-#mmm-lists div[data-err="notfound"] span::after {
-    content: '__MSG_listErrNotFound__';
-}
-#mmm-lists div[data-err="badpass"] span::after {
-    content: '__MSG_listErrBadPassword__';
 }
 .mail {
-    margin:10px 15px;
-    border:solid 1px black;
+    margin: 10px 15px;
+    border: solid 1px black;
 }
 .mail p, #details p {
-    font-size:.85em;
-    padding:10px;
-    margin:0px;
+    font-size: .85em;
+    padding: 10px;
+    margin: 0px;
 }
 
 /* MAIL DETAILS */
+#details h4 {
+    color: hsl(0,0%,20%);
+    font-size: 1.2em;
+    text-align: center;
+}
 #headers, #fulltext {
     white-space: pre-wrap;
-}
-#headers::before, #fulltext::before {
-    font-size: 1.2em;
-    padding: 10px 0;
-    display: block;
-    color: hsl(0, 0%, 30%);
-}
-#headers::before {
-    content: 'HEADERS';
-}
-#fulltext::before {
-    content: 'CONTENT (shortened)';
 }
 
 /* BOX CONTROL */
 .fw {
-    width:100%;
+    width: 100%;
 }
 .hw {
-    width:50%;
-    float:left;
-    margin:0;
+    width: 50%;
+    float: left;
+    margin: 0;
 }
 .clearfix {
-    overflow:auto;
+    overflow: auto;
 }
 .hidden {
-    display:none;
+    display: none;
 }
 
 /* COLORS */
 .grey {
-    background-color:hsla(0,0%,70%,.3);
+    background-color: hsla(0,0%,70%,.3);
 }
 .grey:hover {
-    background-color:hsla(0,0%,70%,1);
+    background-color: hsla(0,0%,70%,1);
 }
 .yellow {
-    background-color:hsla(60,100%,50%,.25);
+    background-color: hsla(60,100%,50%,.25);
 }
 .yellow:hover {
-    background-color:hsla(60,100%,50%,1);
+    background-color: hsla(60,100%,50%,1);
 }
 .green {
-    background-color:hsla(120,100%,50%,.25);
+    background-color: hsla(120,100%,50%,.25);
 }
 .green:hover {
-    background-color:hsla(120,100%,50%,1);
+    background-color: hsla(120,100%,50%,1);
 }
 .blue {
-    background-color:hsla(225,100%,80%,.5);
+    background-color: hsla(225,100%,80%,.5);
 }
 .blue:hover {
-    background-color:hsla(225,100%,80%,1);
+    background-color: hsla(225,100%,80%,1);
 }
 .red {
-    background-color:hsla(0,100%,75%,.5);
+    background-color: hsla(0,100%,75%,.5);
 }
 .red:hover {
-    background-color:hsla(0,100%,75%,1);
+    background-color: hsla(0,100%,75%,1);
 }

@@ -132,24 +132,20 @@ function renderList(list) {
 	$("#mmm-lists").append('<div id="d-' + id + '">');
     }
     // reset div contents and attributes
-    $(div).removeAttr('data-err');
-    $(div).removeAttr('data-mails');
     $(div).empty();
 
     // create list label and radio button
     $(div).append('<label for="r-' + id + '">');
-    $(label).append('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">');
-    $(label).append('<span>');
-    $(label + ">span").text(list.name);
+    $(label).text(list.name);
 
     if(!list.time) {
+	$(label).prepend("<span>" + __("listLoading") + "</span> ");
 	refreshList(list);
     } else {
 	if(list.error) {
 	    // Display error message
-	    $(div).attr('data-err', list.error);
-	} else {
-	    $(div).attr('data-mails', list.mails.length);
+	    $(label).append(' <span class="error">' + __(list.error) || __("listErrUnknown") + '</span>');
+	} else if(list.mails && list.mails.length > 0) {
 	    list.mails.forEach(function(mail) {
 		let mdiv     = '#m-' + mail.msgid;
 		let p        = mdiv + ">p";
@@ -169,8 +165,11 @@ function renderList(list) {
 		$(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
 		$(clearfix + ">button[data-details]").click(mailDetailsClick);
 	    });
+	} else {
+	    $(label).append(' <span>' + __("listNoMessages") + '</span>');
 	}
     }
+    $(label).prepend('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">');
 }
 
 function renderMailDetails(list, details) {

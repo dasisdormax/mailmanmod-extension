@@ -34,7 +34,7 @@
 	"description": "The label for the name field in the edit list form"
     },
     "listLabelBaseurl": {
-	"message": "Server-URL",
+	"message": "Server-URL [?]",
 	"description": "The label for the baseurl field in the edit list form"
     },
     "listLabelPassword": {
@@ -46,23 +46,23 @@
 	"description": "A help message for the baseurl field in the edit list form"
     },
     "listLoading": {
-	"message": "LÄDT ",
+	"message": "LÄDT",
 	"description": "The text displayed when a list has not finished loading"
     },
     "listNoMessages": {
-	"message": " KEINE NEUEN NACHRICHTEN",
+	"message": "KEINE NEUEN NACHRICHTEN",
 	"description": "The text displayed when no new messages are available"
     },
     "listErrUnknown": {
-	"message": " UNBEKANNTER FEHLER",
+	"message": "UNBEKANNTER FEHLER",
 	"description": "The message displayed when loading a list failed for an unknown reason"
     },
     "listErrNotFound": {
-	"message": " LISTE NICHT ERREICHBAR",
+	"message": "LISTE NICHT ERREICHBAR",
 	"description": "The message displayed when the computed URL points to no list at all"
     },
     "listErrBadPassword": {
-	"message": " UNGÜLTIGES PASSWORT",
+	"message": "UNGÜLTIGES PASSWORT",
 	"description": "The message displayed when the given password is invalid"
     },
     "actionRefreshAll": {

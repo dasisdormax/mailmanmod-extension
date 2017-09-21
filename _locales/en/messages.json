@@ -46,23 +46,23 @@
 	"description": "A help message for the baseurl field in the edit list form"
     },
     "listLoading": {
-	"message": "LOADING ",
+	"message": "LOADING",
 	"description": "The text displayed when a list has not finished loading"
     },
     "listNoMessages": {
-	"message": " NO ACTION REQUIRED",
+	"message": "NO ACTION REQUIRED",
 	"description": "The text displayed when no new messages are available"
     },
     "listErrUnknown": {
-	"message": " UNKNOWN ERROR",
+	"message": "UNKNOWN ERROR",
 	"description": "The message displayed when loading a list failed for an unknown reason"
     },
     "listErrNotFound": {
-	"message": " LIST NOT FOUND",
+	"message": "LIST NOT FOUND",
 	"description": "The message displayed when the computed URL points to no list at all"
     },
     "listErrBadPassword": {
-	"message": " INVALID PASSWORD",
+	"message": "INVALID PASSWORD",
 	"description": "The message displayed when the given password is invalid"
     },
     "actionRefreshAll": {
