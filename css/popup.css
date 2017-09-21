@@ -3,12 +3,13 @@
 }
 html {
     overflow-x: hidden;
-    font: 15px sans-serif black;
     background-color: hsl(0,0%,98%);
 }
 body {
     margin: 0px;
     font-family: sans-serif;
+    font-size: 15px;
+    color: black;
     width: 540px;
     max-width: 100%;
 }

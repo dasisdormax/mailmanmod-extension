@@ -80,7 +80,8 @@ $(function(){
     var then = function() {
 	updateIcon();
 	chrome.storage.onChanged.addListener(handleStorageChange);
-	// Execute our background update every 2 minutes
+	// Execute our background update right now and every 2 minutes
+	setTimeout(bgRefreshAll, 0);
 	setInterval(bgRefreshAll, 120000);
     };
     loadAllAnd(then);
