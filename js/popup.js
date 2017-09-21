@@ -29,7 +29,7 @@ function actionNew(id) {
 
 function actionEdit(id) {
     if(!id) {
-	status("Please select a mailing list to edit!");
+	status(_("errNoListSelected"));
 	return;
     }
     showEditForm(getListById(id));
@@ -37,7 +37,7 @@ function actionEdit(id) {
 
 function actionDelete(id) {
     if(!id) {
-	status("Please select a mailing list to delete!");
+	status(_("errNoListSelected"));
 	return;
     }
     lists = lists.filter((list) => list.id != id);
@@ -67,7 +67,7 @@ function listActionClick() {
 	case "refresh":
 	    actionRefresh(id); break;
 	default:
-	    status("Please select an action!");
+	    status(_("errNoActionSelected"));
     }
 }
 
@@ -109,7 +109,7 @@ function editSaveClick() {
     // Validate
     var error = listHasError(list);
     if(error) {
-	status(error);
+	status(_(error));
     } else {
 	updateList(list);
 	showLists();
@@ -129,7 +129,7 @@ function renderList(list) {
     var div   = "div#d-" + id;
     var label = div + ">label";
     if(!$(div).length) {
-	$("#mmm-lists").append($('<div id="d-' + id + '">'));
+	$("#mmm-lists").append('<div id="d-' + id + '">');
     }
     // reset div contents and attributes
     $(div).removeAttr('data-err');
@@ -137,9 +137,9 @@ function renderList(list) {
     $(div).empty();
 
     // create list label and radio button
-    $(div).append($('<label for="r-' + id + '">'));
-    $(label).append($('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">'));
-    $(label).append($('<span>'));
+    $(div).append('<label for="r-' + id + '">');
+    $(label).append('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">');
+    $(label).append('<span>');
     $(label + ">span").text(list.name);
 
     if(!list.time) {
@@ -155,17 +155,17 @@ function renderList(list) {
 		let p        = mdiv + ">p";
 		let clearfix = mdiv + ">.clearfix";
 		// Create child div for each e-mail
-		$(div).append($('<div class="mail" id="m-' + mail.msgid + '">'));
+		$(div).append('<div class="mail" id="m-' + mail.msgid + '">');
 		$(mdiv).attr('data-msgid', mail.msgid);
 		$(mdiv).attr('data-listid', id);
-		$(mdiv).append($('<p>'));
-		$(p).append($('<strong>'));
+		$(mdiv).append('<p>');
+		$(p).append('<strong>');
 		$(p + ">strong").text(mail.subject);
-		$(p).append($('<br>'));
-		$(p).append("From: " + mail.from);
-		$(mdiv).append($('<div class="clearfix">'));
-		$(clearfix).append($('<button class="hw green" data-accept>Accept</button>'));
-		$(clearfix).append($('<button class="hw grey" data-details>Details</button>'));
+		$(p).append('<br>');
+		$(p).append(__("mailFrom", mail.from));
+		$(mdiv).append('<div class="clearfix">');
+		$(clearfix).append('<button class="hw green" data-accept>' + __('buttonAccept')  + "</button>");
+		$(clearfix).append('<button class="hw grey" data-details>' + __('buttonDetails') + "</button>");
 		$(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
 		$(clearfix + ">button[data-details]").click(mailDetailsClick);
 	    });
@@ -174,15 +174,16 @@ function renderList(list) {
 }
 
 function renderMailDetails(list, details) {
+    $("#details > h3 > span").text(_("headingDetails", [details.msgid, list.name]));
     $("#summary").empty();
-    $("#summary").append($('<strong>'));
-    $("#summary>strong").text(details.subject);
-    $("#summary").append($('<br>'));
-    $("#summary").append("From: " + details.from);
-    $("#summary").append($('<br>'));
-    $("#summary").append("Size: " + details.size + " Bytes");
-    $("#summary").append($('<br>'));
-    $("#summary").append("Received: " + details.time);
+    $("#summary").append('<strong>');
+    $("#summary > strong").text(details.subject);
+    $("#summary").append('<br>');
+    $("#summary").append(__('mailFrom', details.from));
+    $("#summary").append('<br>');
+    $("#summary").append(__('mailSize', details.size));
+    $("#summary").append('<br>');
+    $("#summary").append(__('mailTime', details.time));
     $("#headers").text(details.headers);
     var text = details.text;
     text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements
@@ -207,22 +208,15 @@ function status(text) {
 
 // Select the page to show: all others will be hidden
 function select(selection) {
-    var panes = ["#main", "#edit", "#details"];
-    for(var i = 0; i < panes.length; i++) {
-	var id = panes[i];
-	if(id === selection) {
-	    $(id).removeClass("hidden");
-	} else {
-	    $(id).addClass("hidden");
-	}
-    }
+    $("body > div").addClass("hidden");
+    $(selection).removeClass("hidden");
     status("");
 }
 
 function renderAll() {
     $("#mmm-lists").empty();
     if(!lists || lists.length == 0) {
-	$("#mmm-lists").append("<p>No lists found!</p>");
+	$("#mmm-lists").append("<p>" + __("errNoListsFound") + "</p>");
 	return;
     } else {
 	for(var i = 0; i < lists.length; i++) {
@@ -259,6 +253,7 @@ function handleMessage(msg) {
  * INITIALIZATION *
  ******************/
 $(function() {
+    $("body").html(localizeHtml);
     $("#mmm-list-perform-action").click(listActionClick);
     $("#mmm-edit-save").click(editSaveClick);
     $("#mmm-options").click(optionsClick);

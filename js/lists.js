@@ -63,15 +63,19 @@ function listUrl(list) {
     return list.baseurl + "/admindb/" + list.name;
 }
 
+// Checks a list object for errors
+// Returns the message code if an error was found, null otherwise
 function listHasError(list) {
     if (!list.name)
-	return "List name is empty!";
+	return "errListNameEmpty";
+    if (list.name.search(/[/?.]/) !== -1)
+	return "errListNameIllegal";
     if (list.baseurl.search(/^https?:\/\//) !== 0)
-	return "Base URL does not contain a protocol (http:// or https://)";
+	return "errListBaseurlProtocol";
     if (list.baseurl.indexOf("*") !== -1)
-	return "Base URL contains illegal characters!";
+	return "errListBaseurlIllegal";
     if (!list.password)
-	return "List password is empty!"
+	return "errListPasswordEmpty";
     return null;
 }
 
@@ -86,7 +90,7 @@ function loadAllAnd(then) {
 	// Error handling
 	if(chrome.runtime.lastError) {
 	    if(storage) {
-		status("Error accessing storage: " + chrome.runtime.lastError.message);
+		status(_("errStorageAccess", chrome.runtime.lastError.message));
 		return;
 	    }
 	    // If the sync storage fails, try again using the local storage
@@ -112,7 +116,7 @@ function saveAll() {
     // Sync to persistent storage and background task
     storage.set({lists}, function() {
 	if(chrome.runtime.lastError)
-	    status("Error writing to storage: " + chrome.runtime.lastError.message);
+	    status(_("errStorageAccess", chrome.runtime.lastError.message));
     });
     updateIcon();
 }
@@ -123,6 +127,20 @@ function updateIcon() {
     lists.forEach((list) => mails += list.mails.length);
     chrome.browserAction.setBadgeBackgroundColor({color: "red"});
     chrome.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
+}
+
+/*************
+ * UTILITIES *
+ *************/
+
+// Shortcuts for getting a localized string
+// Using two underscores will additionally escape html special characters
+var _  = (msg, args) => chrome.i18n.getMessage(msg, args);
+var __ = (msg, args) => $("<div>").text(_(msg, args)).html();
+
+// Replaces placeholders in the HTML with the actual localized texts
+function localizeHtml(i, html) {
+    return html.replace(/__MSG_([^<>"' ]+?)__/g, (match, msg) => __(msg));
 }
 
 /***********

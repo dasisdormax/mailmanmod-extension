@@ -11,50 +11,50 @@
 <body>
     <div id="main">
 	<div class="roundrect">
-	    <h3><span>Mailing lists</span></h3>
+	    <h3><span>__MSG_headingMain__</span></h3>
 	    <div id="mmm-lists">
 	    </div>
 	    <select id="mmm-select-action" class="fw">
-		<option value="refresh">Refresh all lists</option>
-		<option value="new" selected>Create a new mailing list</option>
-		<option value="edit">Edit selected list</option>
-		<option value="delete">Delete selected list</option>
+		<option value="refresh">__MSG_actionRefreshAll__</option>
+		<option value="new" selected>__MSG_actionNew__</option>
+		<option value="edit">__MSG_actionEdit__</option>
+		<option value="delete">__MSG_actionDelete__</option>
 	    </select>
-	    <button id="mmm-list-perform-action" class="fw blue">Perform selected action!</button>
+	    <button id="mmm-list-perform-action" class="fw blue">__MSG_buttonPerformAction__</button>
 	</div>
 	<div class="clearfix">
-	    <button id="mmm-options" class="fw grey">About &amp; Options</button>
+	    <button id="mmm-options" class="fw grey">__MSG_buttonOptions__</button>
 	</div>
     </div>
     <div id="edit" class="roundrect hidden">
-	<h3><span>Add/Edit list</span></h3>
-	<button class="fw grey" data-cancel>Cancel</button>
+	<h3><span>__MSG_headingEdit__</span></h3>
+	<button class="fw grey" data-cancel>__MSG_buttonCancel__</button>
 	<form>
 	    <input type="hidden" id="edit-id" value="">
-	    <label for="name">List Name</label>
+	    <label for="name">__MSG_listLabelName__</label>
 	    <input type="text" class="fw" id="edit-name" value="">
-	    <label for="baseurl" title="The link to the mailman web interface, WITHOUT additional parts such as &#39;/admindb/&lt;listname&gt;&#39;">Base URL [?]</label>
+	    <label for="baseurl" title="__MSG_listHelpBaseurl__">__MSG_listLabelBaseurl__</label>
 	    <input type="text" class="fw" id="edit-baseurl" value="">
-	    <label for="password">List password</label>
+	    <label for="password">__MSG_listLabelPassword__</label>
 	    <input type="text" class="fw" id="edit-password" value="">
 	</form>
-	<button id="mmm-edit-save" class="fw green">Save</button>
+	<button id="mmm-edit-save" class="fw green">__MSG_buttonSave__</button>
     </div>
     <div id="details" class="roundrect hidden">
-	<h3><span>Mail Details</span></h3>
-	<button class="fw grey" data-cancel>Cancel</button>
+	<h3><span>__MSG_headingDetails__</span></h3>
+	<button class="fw grey" data-cancel>__MSG_buttonCancel__</button>
 	<p id="summary"></p>
 	<p id="headers"></p>
 	<p id="fulltext"></p>
 	<input type="hidden" id="mail-listid"    value="">
 	<input type="hidden" id="mail-msgid"     value="">
 	<input type="hidden" id="mail-csrftoken" value="">
-	<button class="fw grey"   data-mailaction="none">Do Nothing</button>
-	<button class="fw green"  data-mailaction="accept">Accept</button>
-	<button class="fw red"    data-mailaction="reject">Reject</button>
-	<button class="fw yellow" data-mailaction="discard">Discard</button>
+	<button class="fw grey"   data-mailaction="none">__MSG_buttonDecideLater__</button>
+	<button class="fw green"  data-mailaction="accept">__MSG_buttonAccept__</button>
+	<button class="fw red"    data-mailaction="reject">__MSG_buttonReject__</button>
+	<button class="fw yellow" data-mailaction="discard">__MSG_buttonDiscard__</button>
     </div>
     <div id="result" class="hidden"></div>
-    <p id="status">Loading ...</p>
+    <p id="status">__MSG_statusLoading__</p>
 </body>
 </html>

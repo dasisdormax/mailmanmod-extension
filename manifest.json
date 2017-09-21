@@ -1,10 +1,12 @@
 {
     "manifest_version": 2,
-    "name": "mailmanmod",
-    "version": "0.3.5",
+    "name": "__MSG_extensionName__",
+    "version": "0.4.0",
 
-    "description": "Manage and moderate all your mailman lists at once",
+    "description": "__MSG_extensionDescription__",
     "homepage_url": "https://github.com/dasisdormax/mailmanmod-webextension",
+
+    "default_locale": "en",
 
     "applications": {
 	"gecko": {
@@ -19,7 +21,7 @@
     
     "browser_action": {
 	"default_icon": "icons/mmm-96.png",
-	"default_title": "Mailman Moderation",
+	"default_title": "__MSG_extensionName__",
 	"default_popup": "html/popup.html"
     },
 

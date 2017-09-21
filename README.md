@@ -19,10 +19,12 @@ with a test installation, i'll try my best to update this extension for it.
 
 ## Limitations
 - Mailman v2 only
+- Synchronization cannot be turned off
 - Assumes that the moderation interface is located at *&lt;baseurl&gt;*/admindb/*&lt;listname&gt;*, which may or may not be the case for you
-- Only available in English
 
 ## Installation
+
+Note that you will have to repeat these steps each time you restart your browser. However, your browser should keep your storage across versions (only tested with FF). Export your settings regularly :)
 
 ### Firefox (current / ESR 52)
 - Clone this repository

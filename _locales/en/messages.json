@@ -1,0 +1,200 @@
+{
+    "extensionName": {
+	"message": "Mailman Moderation",
+	"description": "The extension name"
+    },
+    "extensionDescription": {
+	"message": "Manage and moderate all your mailman lists in one place",
+	"description": "A longer description for this extension"
+    },
+    "headingMain": {
+	"message": "Mailing lists",
+	"description": "The heading for the mailing lists panel"
+    },
+    "headingEdit": {
+	"message": "Add / Edit List",
+	"description": "The heading for the editing panel"
+    },
+    "headingDetails": {
+	"message": "Details for #$MSGID$ in $LISTNAME$",
+	"description": "The heading for the mail details panel",
+	"placeholders": {
+	    "msgid": {
+		"content": "$1",
+		"example": "463"
+	    },
+	    "listname": {
+		"content": "$2",
+		"example": "listname"
+	    }
+	}
+    },
+    "listLabelName": {
+	"message": "List Name",
+	"description": "The label for the name field in the edit list form"
+    },
+    "listLabelBaseurl": {
+	"message": "Base URL [?]",
+	"description": "The label for the baseurl field in the edit list form"
+    },
+    "listLabelPassword": {
+	"message": "Moderation Password",
+	"description": "The label for the password field in the edit list form"
+    },
+    "listHelpBaseurl": {
+	"message": "The URL to the moderation interface, excluding the list name itself",
+	"description": "A help message for the baseurl field in the edit list form"
+    },
+    "listLoading": {
+	"message": "LOADING ",
+	"description": "The text displayed when a list has not finished loading"
+    },
+    "listNoMessages": {
+	"message": " NO ACTION REQUIRED",
+	"description": "The text displayed when no new messages are available"
+    },
+    "listErrUnknown": {
+	"message": " UNKNOWN ERROR",
+	"description": "The message displayed when loading a list failed for an unknown reason"
+    },
+    "listErrNotFound": {
+	"message": " LIST NOT FOUND",
+	"description": "The message displayed when the computed URL points to no list at all"
+    },
+    "listErrBadPassword": {
+	"message": " INVALID PASSWORD",
+	"description": "The message displayed when the given password is invalid"
+    },
+    "actionRefreshAll": {
+	"message": "Refresh all lists",
+	"description": "The text for the refresh all action option"
+    },
+    "actionNew": {
+	"message": "Create a new mailing list",
+	"description": "The text for the create new list action option"
+    },
+    "actionEdit": {
+	"message": "Edit selected list",
+	"description": "The text for the edit selected list action option"
+    },
+    "actionDelete": {
+	"message": "Delete selected list",
+	"description": "The text for the delete selected list action option"
+    },
+    "buttonPerformAction": {
+	"message": "Perform selected action",
+	"description": "The caption for the perform action button"
+    },
+    "buttonOptions": {
+	"message": "About & Options",
+	"description": "The caption for the about and options button"
+    },
+    "buttonCancel": {
+	"message": "Cancel",
+	"description": "The caption for the cancel buttons"
+    },
+    "buttonSave": {
+	"message": "Save changes",
+	"description": "The caption for the save changes button"
+    },
+    "buttonDetails": {
+	"message": "Details",
+	"description": "The caption for the mail details button"
+    },
+    "buttonDecideLater": {
+	"message": "Decide later",
+	"description": "The caption for the mail decide later button"
+    },
+    "buttonAccept": {
+	"message": "Accept",
+	"description": "The caption for the mail accept button"
+    },
+    "buttonReject": {
+	"message": "Reject",
+	"description": "The caption for the mail reject button"
+    },
+    "buttonDiscard": {
+	"message": "Discard",
+	"description": "The caption for the mail discard button"
+    },
+    "buttonImport": {
+	"message": "Import",
+	"description": "The caption for the import lists button"
+    },
+    "buttonExport": {
+	"message": "Export",
+	"description": "The caption for the export lists button"
+    },
+    "mailFrom": {
+	"message": "From: $1",
+	"description": "The mail from field name"
+    },
+    "mailSize": {
+	"message": "Size: $1 Bytes",
+	"description": "The mail size field name"
+    },
+    "mailTime": {
+	"message": "Received on: $1",
+	"description": "The mail receival time field name"
+    },
+    "mailHeaders": {
+	"message": "HEADERS",
+	"description": "The mail header section heading"
+    },
+    "mailContent": {
+	"message": "CONTENT (shortened)",
+	"description": "The mail content section heading"
+    },
+    "errNoListsFound": {
+	"message": "No lists found",
+	"description": "The message displayed when no lists are found"
+    },
+    "errNoActionSelected": {
+	"message": "Error: No action selected!",
+	"description": "The error displayed when clicking the perform action button with no action selected"
+    },
+    "errNoListSelected": {
+	"message": "Error: No list selected!",
+	"description": "The error displayed when trying to perform an action with no list selected"
+    },
+    "errListNameEmpty": {
+	"message": "Error: List name is empty!",
+	"description": "The error displayed when trying to save a list with an empty name"
+    },
+    "errListNameIllegal": {
+	"message": "Error: List name contains illegal characters!",
+	"description": "The error displayed when trying to save a list with an illegal name"
+    },
+    "errListBaseurlProtocol": {
+	"message": "Error: Base URL does not contain a valid protocol (http:// or https://)!",
+	"description": "The error displayed when trying to save a list with an invalid or missing base URL protocol"
+    },
+    "errListBaseurlIllegal": {
+	"message": "Error: Base URL contains illegal characters!",
+	"description": "The error displayed when trying to save a list with an illegal base URL"
+    },
+    "errListPasswordEmpty": {
+	"message": "Error: Moderation password is empty!",
+	"description": "The error displayed when trying to save a list with an empty moderation password"
+    },
+    "errStorageAccess": {
+	"message": "Error accessing addon storage: $1",
+	"description": "The error displayed when a storage access failed"
+    },
+    "errImportFiletype": {
+	"message": "Invalid filetype! Only JSON files are allowed.",
+	"description": "The error displayed when trying to import from a non-JSON file"
+    },
+    "errImportParseError": {
+	"message": "Import Error: The provided file contains invalid data!",
+	"description": "The error displayed when the provided file could not be parsed as mailing lists correctly"
+    },
+    "statusLoading": {
+	"message": "Loading ...",
+	"description": "The status message displayed when loading the popup"
+    },
+    "statusImportSuccessful": {
+	"message": "Import completed successfully. Imported records: $1",
+	"description": "The message displayed after a successful import"
+    }
+}

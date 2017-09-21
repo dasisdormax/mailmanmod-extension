@@ -27,7 +27,7 @@
 
 function doImport(file) {
     if(!file || file.type.search(/json/) < 0) {
-	status("Invalid filetype! Only JSON files are allowed.");
+	status(_('errImportFiletype'));
 	return;
     }
     // Read file contents using FileReader
@@ -47,10 +47,10 @@ function doImport(file) {
 		tmp.push(newlist);
 	    });
 	    lists = tmp;
-	    status("Import successful! Imported Lists: " + lists.length);
+	    status(_("statusImportSuccessful", tmp.length));
 	    saveAll();
 	} catch(ex) {
-	    status("The provided file contains invalid data!");
+	    status(_("errImportParseError"));
 	}
     };
     reader.readAsText(file);
@@ -97,6 +97,7 @@ function status(text) {
  * INITIALIZATION *
  ******************/
 $(function(){
+    $("body").html(localizeHtml);
     $("#status").click(() => status(""));
     $("#import").click(openFileChooser);
     $("#export").click(beginExport);
