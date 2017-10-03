@@ -125,12 +125,17 @@ function optionsClick() {
 /*************
  * RENDERING *
  *************/
-function renderList(list) {
+function renderList(list, index) {
     var id    = list.id;
     var div   = "div#d-" + id;
     var label = div + ">label";
     if(!$(div).length) {
-	$("#mmm-lists").append('<div id="d-' + id + '">');
+	let html = '<div id="d-' + id + '">';
+	if(lists[index+1]) {
+	    $("div#d-" + lists[index+1].id).before(html);
+	} else {
+	    $("#mmm-lists").append(html);
+	}
     }
     // reset div contents and attributes
     $(div).empty();
@@ -220,13 +225,8 @@ function select(selection) {
 
 function renderAll() {
     $("#mmm-lists").empty();
-    if(!lists || lists.length == 0) {
-	$("#mmm-lists").append("<p>" + __("errNoListsFound") + "</p>");
-	return;
-    } else {
-	for(var i = 0; i < lists.length; i++) {
-	    renderList(lists[i]);
-	}
+    for(var i = 0; i < lists.length; i++) {
+	renderList(lists[i]);
     }
 }
 
@@ -257,6 +257,8 @@ function handleMessage(msg) {
 /******************
  * INITIALIZATION *
  ******************/
+var context = "[POPUP]";
+
 $(function() {
     $("body").html(localizeHtml);
     $("#mmm-list-perform-action").click(listActionClick);
@@ -265,6 +267,7 @@ $(function() {
     $("#status").click(() => status(''));
     $("button[data-cancel]").click(showLists);
     $("button[data-mailaction]").click(detailActionClick);
+    chrome.storage.onChanged.addListener(handleStorageChanges);
     showLists();
     loadAll();
 });

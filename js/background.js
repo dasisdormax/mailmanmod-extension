@@ -18,16 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Instead of rendering the list ourselves, we send it to the popup
-// to render it for us
-function renderList(list) {
-    updateIcon();
-    chrome.runtime.sendMessage({
-	action: "renderList",
-	list
-    }, suppressError);
-}
-
 function status(text) {
     if(text) console.log(text);
 }
@@ -36,15 +26,6 @@ function status(text) {
  * BACKGROUND TASK *
  *******************/
 function bgRefreshAll() {
-    if(refresh) {
-	// TODO: parse changes directly in the onStorageChanged handler, so
-	// we do not have to do this
-	refresh = false;
-	loadAll();
-	setTimeout(bgRefreshAll, 5000);
-	return;
-    }
-
     // the sorting makes sure that the oldest lists are updated first
     var sorted = lists.sort((a, b) => a.time > b.time ? 1 : -1);
     var time = new Date().getTime();
@@ -60,24 +41,15 @@ function bgRefreshAll() {
     }
 }
 
-/*****************
- * COMMUNICATION *
- *****************/
-// Note that the lists have been modified externally.
-// We will refresh them before the next background update
-function handleStorageChange(change, area) {
-    refresh = true;
-}
-
 /******************
  * INITIALIZATION *
  ******************/
-var refresh;
+var context = "[BACKGROUND]";
 
 $(function(){
     loadAll();
     // Listen to storage changes
-    chrome.storage.onChanged.addListener(handleStorageChange);
+    chrome.storage.onChanged.addListener(handleStorageChanges);
     // Execute our background update right now and every 2 minutes
     setTimeout(bgRefreshAll, 5000);
     setInterval(bgRefreshAll, 120000);

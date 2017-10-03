@@ -86,6 +86,7 @@ function readItems(items) {
 	// disables it
 	settings.useSync = true;
     }
+    updateIcon();
 }
 
 function saveSettings() {
@@ -112,6 +113,7 @@ function deleteCredentialWithId(id) {
     chrome.storage.local.remove(key, handleError);
     if(settings.hasSync && settings.useSync)
 	chrome.storage.sync.remove(key, suppressError);
+    updateIcon();
 }
 
 function saveList(list) {
@@ -120,6 +122,7 @@ function saveList(list) {
     var obj = {};
     obj[key] = list;
     chrome.storage.local.set(obj, handleError);
+    updateIcon();
 }
 
 function saveAll() {
@@ -131,4 +134,48 @@ function saveAll() {
     });
     chrome.storage.local.set(listObj, handleError);
     updateIcon();
+}
+
+// React to storage change events
+function handleStorageChanges(changes, area) {
+    var key;
+    if(area == 'sync' && settings.useSync) {
+	for(key in changes) {
+	    let change = changes[key];
+	    if(key.indexOf('list_') !== 0 || isUnchanged(change))
+		continue;
+	    console.log(area, key, change);
+	    if( change.newValue && key == 'list_' + change.newValue.id)
+		saveList(change.newValue);
+	    if(!change.newValue && key == 'list_' + change.oldValue.id)
+		deleteCredentialWithId(change.oldValue.id);
+	    updateIcon();
+	}
+    }
+    if(area == 'local') {
+	for(key in changes) {
+	    let change = changes[key];
+	    if(key.indexOf('list_') !== 0 || isUnchanged(change))
+		continue;
+	    console.log(context, area, key, change);
+	    if( change.newValue && key == 'list_' + change.newValue.id)
+		updateList(changes[key].newValue);
+	    if(!change.newValue && key == 'list_' + change.oldValue.id)
+		lists = lists.filter((list) => list.id !== change.oldValue.id);
+	    updateIcon();
+	}
+    }
+}
+
+function isUnchanged(change) {
+    var newKeys = change.newValue ? Object.keys(change.newValue).sort() : [];
+    var oldKeys = change.oldValue ? Object.keys(change.oldValue).sort() : [];
+    if(newKeys !== oldKeys)
+	return false;
+
+    var key;
+    for(key in change.newValue)
+	if(change.newValue[key] !== change.oldValue[key])
+	    return false;
+    return true;
 }

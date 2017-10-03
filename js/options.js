@@ -107,6 +107,8 @@ function status(text) {
 /******************
  * INITIALIZATION *
  ******************/
+var context = "[OPTIONS]";
+
 $(function(){
     $("body").html(localizeHtml);
     $("#status").click(() => status(""));
