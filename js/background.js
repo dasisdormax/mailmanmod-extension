@@ -21,11 +21,14 @@
 // Instead of rendering the list ourselves, we send it to the popup
 // to render it for us
 function renderList(list) {
-    updateIcon();
     chrome.runtime.sendMessage({
 	action: "renderList",
 	list
-    }, suppressError);
+    }, function() {
+	// Suppress error unchecked messages. We expect the communication
+	// to fail when the popup is not open.
+	return chrome.runtime.lastError;
+    });
 }
 
 function status(text) {
@@ -37,11 +40,10 @@ function status(text) {
  *******************/
 function bgRefreshAll() {
     if(refresh) {
-	// TODO: parse changes directly in the onStorageChanged handler, so
-	// we do not have to do this
-	refresh = false;
-	loadAll();
-	setTimeout(bgRefreshAll, 5000);
+	loadAllAnd(function() {
+	    refresh = false;
+	    bgRefreshAll();
+	});
 	return;
     }
 
@@ -72,13 +74,15 @@ function handleStorageChange(change, area) {
 /******************
  * INITIALIZATION *
  ******************/
-var refresh;
+var refresh = false;
 
 $(function(){
-    loadAll();
-    // Listen to storage changes
-    chrome.storage.onChanged.addListener(handleStorageChange);
-    // Execute our background update right now and every 2 minutes
-    setTimeout(bgRefreshAll, 5000);
-    setInterval(bgRefreshAll, 120000);
+    var then = function() {
+	updateIcon();
+	chrome.storage.onChanged.addListener(handleStorageChange);
+	// Execute our background update right now and every 2 minutes
+	setTimeout(bgRefreshAll, 0);
+	setInterval(bgRefreshAll, 120000);
+    };
+    loadAllAnd(then);
 });

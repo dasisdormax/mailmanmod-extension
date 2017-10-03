@@ -40,7 +40,8 @@ function actionDelete(id) {
 	status(_("errNoListSelected"));
 	return;
     }
-    deleteCredentialWithId(id);
+    lists = lists.filter((list) => list.id != id);
+    saveAll();
     showLists();
 }
 
@@ -75,8 +76,7 @@ function mailAcceptClick() {
     var div   = $(this).parents(".mail");
     var list  = getListById(div.attr("data-listid"));
     var msgid = div.attr("data-msgid");
-    var mail  = list.mails.find((mail) => mail.msgid === msgid);
-    mailAction("accept", list, mail);
+    mailAction("accept", list, msgid);
 }
 
 // Open the details view for a specifc e-mail
@@ -84,18 +84,16 @@ function mailDetailsClick() {
     var div   = $(this).parents(".mail");
     var list  = getListById(div.attr("data-listid"));
     var msgid = div.attr("data-msgid");
-    var mail  = list.mails.find((mail) => mail.msgid === msgid);
-    getMailDetails(list, mail).then((details) => renderMailDetails(list, details));
+    getMailDetails(list, msgid).then((details) => renderMailDetails(list, details));
 }
 
 // Execute an action on a specific mail from its detail page
 function detailActionClick() {
-    var list        = getListById($("#mail-listid").val());
-    var msgid       = $("#mail-msgid").val();
-    var mail        = list.mails.find((mail) => mail.msgid === msgid);
-    mail.csrf_token = $("#mail-csrftoken").val();
-    var action      = $(this).attr("data-mailaction");
-    mailAction(action, list, mail);
+    var list       = getListById($("#mail-listid").val());
+    var msgid      = $("#mail-msgid").val();
+    var csrf_token = $("#mail-csrftoken").val();
+    var action     = $(this).attr("data-mailaction");
+    mailAction(action, list, msgid, csrf_token);
     showLists();
 }
 
@@ -113,7 +111,8 @@ function editSaveClick() {
     if(error) {
 	status(_(error));
     } else {
-	updateCredential(list);
+	updateList(list);
+	showLists();
     }
 }
 
@@ -180,25 +179,20 @@ function renderMailDetails(list, details) {
     $("#summary > strong").text(details.subject);
     $("#summary").append('<br>');
     $("#summary").append(__('mailFrom', details.from));
-    if(details.size) {
-	$("#mail").removeClass('hidden');
-	$("#summary").append('<br>');
-	$("#summary").append(__('mailSize', details.size));
-	$("#summary").append('<br>');
-	$("#summary").append(__('mailTime', details.time));
-	$("#headers").text(details.headers);
-	var text = details.text;
-	text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements
-	text = text.replace(/<[a-zA-Z!\/-][^>]*(>|$)/g,''); // Remove HTML tags and comments
-	text = text.replace(/\n\s+\n/g,"\n\n");             // Remove unnecessary whitespace and linebreaks
-	text = text.trim();                                 // Remove leading and trailing whitespace
-	$("#fulltext").text(text);
-    } else {
-	$("#mail").addClass('hidden');
-    }
+    $("#summary").append('<br>');
+    $("#summary").append(__('mailSize', details.size));
+    $("#summary").append('<br>');
+    $("#summary").append(__('mailTime', details.time));
+    $("#headers").text(details.headers);
+    var text = details.text;
+    text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements
+    text = text.replace(/<[a-zA-Z!\/-][^>]*(>|$)/g,''); // Remove HTML tags and comments
+    text = text.replace(/\n\s+\n/g,"\n\n");             // Remove unnecessary whitespace and linebreaks
+    text = text.trim();                                 // Remove leading and trailing whitespace
+    $("#fulltext").text(text);
     $("#mail-listid").val(list.id);
     $("#mail-msgid").val(details.msgid);
-    $("#mail-csrftoken").val(details.csrf_token || '');
+    $("#mail-csrftoken").val(details.csrf_token);
     select("#details");
 }
 
@@ -265,6 +259,10 @@ $(function() {
     $("#status").click(() => status(''));
     $("button[data-cancel]").click(showLists);
     $("button[data-mailaction]").click(detailActionClick);
-    showLists();
-    loadAll();
+    var then = function(){
+	// Listen to list updates from the background task
+	chrome.runtime.onMessage.addListener(handleMessage);
+	showLists();
+    }
+    loadAllAnd(then);
 });

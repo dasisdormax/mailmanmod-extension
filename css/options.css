@@ -4,24 +4,15 @@
 div {
     position: relative;
     overflow: auto;
-    width: 450px;
-    max-width: 100%;
+    width: 300px;
     margin: 0px auto;
 }
 button {
     text-align: center;
     display: block;
     float: left;
-    width: 45%;
-    margin: 10px 2.5%;
-}
-button:first-child:last-child {
-    width: 95%;
-}
-label {
-    display: block;
-    width: 95%;
-    margin: 10px 2.5%;
+    width: 130px;
+    margin: 10px;
 }
 #status {
     width: 400px;

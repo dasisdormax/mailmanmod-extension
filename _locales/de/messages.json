@@ -45,10 +45,6 @@
 	"message": "Die URL zum Moderations-Interface, ohne den Listennamen",
 	"description": "A help message for the baseurl field in the edit list form"
     },
-    "listJoinRequest": {
-	"message": "Neue Beitrittsanfrage",
-	"description": "The subject displayed for a join request message"
-    },
     "listLoading": {
 	"message": "LÄDT",
 	"description": "The text displayed when a list has not finished loading"
