@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="/css/popup.css">
     <script src="/extern/jquery/jquery-3.2.1.min.js"></script>
-    <script src="/js/lists.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/storage.js"></script>
     <script src="/js/network.js"></script>
     <script src="/js/popup.js"></script>
 </head>
@@ -34,9 +35,9 @@
 	    <label for="name">__MSG_listLabelName__</label>
 	    <input type="text" class="fw" id="edit-name" value="">
 	    <label for="baseurl" title="__MSG_listHelpBaseurl__">__MSG_listLabelBaseurl__</label>
-	    <input type="text" class="fw" id="edit-baseurl" value="">
+	    <input type="url" class="fw" id="edit-baseurl" value="">
 	    <label for="password">__MSG_listLabelPassword__</label>
-	    <input type="text" class="fw" id="edit-password" value="">
+	    <input type="password" class="fw" id="edit-password" value="">
 	</form>
 	<button id="mmm-edit-save" class="fw green">__MSG_buttonSave__</button>
     </div>
@@ -44,10 +45,12 @@
 	<h3><span>__MSG_headingDetails__</span></h3>
 	<button class="fw grey" data-cancel>__MSG_buttonCancel__</button>
 	<p id="summary"></p>
-	<h4>__MSG_mailHeaders__</h4>
-	<p id="headers"></p>
-	<h4>__MSG_mailContent__</h4>
-	<p id="fulltext"></p>
+	<div id="mail">
+	    <h4>__MSG_mailHeaders__</h4>
+	    <p id="headers"></p>
+	    <h4>__MSG_mailContent__</h4>
+	    <p id="fulltext"></p>
+	</div>
 	<input type="hidden" id="mail-listid"    value="">
 	<input type="hidden" id="mail-msgid"     value="">
 	<input type="hidden" id="mail-csrftoken" value="">

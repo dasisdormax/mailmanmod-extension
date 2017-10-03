@@ -26,11 +26,9 @@ function newList(id) {
     id = id || new Date().getTime().toString(36) + Math.floor(Math.random() * 1.e9).toString(36);
     return {
 	id,
-	name: "list",
-	baseurl: "https://mailman.domain.tld",
-	password: "listpwd",
-	mails: [],
-	time: null
+	name:      "list",
+	baseurl:   "https://mailman.domain.tld",
+	password:  "listpwd",
     };
 };
 
@@ -48,15 +46,28 @@ function getListById(id) {
     return lists.find((list) => list.id == id) || newList(id);
 }
 
+// Add a list to the global lists array or update it
+// - Makes sure that the list stays sorted with respect to the list names
+// - Returns the index of the inserted or updated element, or -1
+// NOTE that two lists cannot have the same name
 function updateList(newlist) {
-    // Add or update a list to the global lists array
     var index = lists.findIndex((list) => list.id == newlist.id);
     if(index >= 0) {
 	lists[index] = newlist;
     } else {
-	lists.push(newlist);
+	index = lists.findIndex((list) => list.name >= newlist.name);
+	if(index === -1) {
+	    index = lists.length;
+	    lists.push(newlist);
+	} else if(lists[index].name === newlist.name) {
+	    return -1;
+	} else {
+	    lists.splice(index, 0, newlist);
+	}
     }
-    saveAll();
+    // Render the updated list and pass the index as hint to where to place it
+    if(typeof renderList == 'function') renderList(newlist, index);
+    return index;
 };
 
 function listUrl(list) {
@@ -79,52 +90,10 @@ function listHasError(list) {
     return null;
 }
 
-/****************
- * List storage *
- ****************/
-
-// Load all lists from the addon storage and execute function then when done
-function loadAllAnd(then) {
-    var tmpStorage = storage || chrome.storage.sync || chrome.storage.local;
-    tmpStorage.get(null, function(items){
-	// Error handling
-	if(chrome.runtime.lastError) {
-	    if(storage) {
-		status(_("errStorageAccess", chrome.runtime.lastError.message));
-		return;
-	    }
-	    // If the sync storage fails, try again using the local storage
-	    // Older Firefoxes will advertize sync support, but fail with a runtime error
-	    storage = chrome.storage.local;
-	    loadAllAnd(then);
-	    return;
-	}
-	storage = tmpStorage;
-
-	// Read data from the storage
-	if(items && Array.isArray(items['lists']))
-	    lists = items['lists'];
-
-	// Execute callback
-	then();
-    });
-};
-
-function saveAll() {
-    // Sort lists by list name
-    lists.sort((a,b) => a.name > b.name ? 1 : -1);
-    // Sync to persistent storage and background task
-    storage.set({lists}, function() {
-	if(chrome.runtime.lastError)
-	    status(_("errStorageAccess", chrome.runtime.lastError.message));
-    });
-    updateIcon();
-}
-
 // Count total mails and update browser action
 function updateIcon() {
     var mails = 0;
-    lists.forEach((list) => mails += list.mails.length);
+    lists.forEach((list) => mails += list.mails ? list.mails.length : 0);
     chrome.browserAction.setBadgeBackgroundColor({color: "red"});
     chrome.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
 }
@@ -135,8 +104,26 @@ function updateIcon() {
 
 // Shortcuts for getting a localized string
 // Using two underscores will additionally escape html special characters
-var _  = (msg, args) => chrome.i18n.getMessage(msg, args);
+var _  = (msg, args) => chrome.i18n.getMessage(msg, args) || "__MSG_" + msg + "__";
 var __ = (msg, args) => $("<div>").text(_(msg, args)).html();
+
+// If the last operation has a chrome.runtime.lastError, display its message
+function handleError(pattern) {
+    if(chrome.runtime.lastError) {
+	if(pattern && typeof pattern == 'string')
+	    status(_(pattern, chrome.runtime.lastError.message));
+	else
+	    status(chrome.runtime.lastError.message);
+	return false;
+    }
+    return true;
+}
+
+// Suppresses error messages when not handling chrome.runtime.lastError
+function suppressError() {
+    chrome.runtime.lastError;
+    return undefined;
+}
 
 // Replaces placeholders in the HTML with the actual localized texts
 function localizeHtml(i, html) {
@@ -146,5 +133,8 @@ function localizeHtml(i, html) {
 /***********
  * GLOBALS *
  ***********/
-var storage;
+var settings = {
+    "useSync": false,
+    "hasSync": undefined
+};
 var lists = [];

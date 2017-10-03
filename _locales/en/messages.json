@@ -65,6 +65,10 @@
 	"message": "INVALID PASSWORD",
 	"description": "The message displayed when the given password is invalid"
     },
+    "listJoinRequest": {
+	"message": "New join request",
+	"description": "The subject displayed for a join request message"
+    },
     "actionRefreshAll": {
 	"message": "Refresh all lists",
 	"description": "The text for the refresh all action option"

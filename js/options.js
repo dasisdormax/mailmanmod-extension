@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /*******************
  * IMPORT / EXPORT *
  *******************/
@@ -71,17 +70,29 @@ function doExport() {
     download(dataurl, "mmm.json", "text/json");
 }
 
+function doClearSync() {
+    chrome.storage.sync.clear(suppressError);
+}
+
+function toggleUseSync(event) {
+    // Do interesting stuff here
+}
+
 function openFileChooser() {
     $("#import-file").click();
 }
 
 function beginImport() {
     var file = this.files[0];
-    loadAllAnd(() => doImport(file));
+    // TODO: listen to changes and remove loadAll()
+    loadAll();
+    setTimeout(doImport, 1000, file);
 }
 
 function beginExport() {
-    loadAllAnd(doExport);
+    // TODO: listen to changes and remove loadAll()
+    loadAll();
+    setTimeout(doExport, 1000);
 }
 
 function status(text) {
@@ -101,5 +112,7 @@ $(function(){
     $("#status").click(() => status(""));
     $("#import").click(openFileChooser);
     $("#export").click(beginExport);
+    $("#clearSync").click(doClearSync);
+    $("#useSync").change(toggleUseSync);
     $("#import-file").change(beginImport);
 });

@@ -33,8 +33,7 @@ function refreshList(list) {
     list.error = null;
     $.post(url, data, function(html) {
 	parseAdmindb(list, html);
-	saveAll();
-	renderList(list);
+	saveList(list);
     }).fail(function(request){
 	switch(request.status) {
 	    case 401:
@@ -45,23 +44,29 @@ function refreshList(list) {
 		list.error = 'listErrUnknown';
 	}
 	list.time = new Date().getTime();
-	saveAll();
-	renderList(list);
+	saveList(list);
     });
 }
 
 // gets mail details asynchronously
-// Usage: getMailDetails(list, msgid).then(callback);
-function getMailDetails(list, msgid) {
-    var url = listUrl(list);
+// Usage: getMailDetails(list, mail).then(callback);
+function getMailDetails(list, mail) {
     // return a promise that resolves with the details object
     // if the response could be parsed correctly
     return new Promise((resolve, reject) => {
+	if(!mail.size) {
+	    // this mail object is a join request and we cannot
+	    // get more details than we already have
+	    resolve(mail);
+	    return;
+	}
+	// Create request to detail page
+	var url = listUrl(list);
+	var msgid = mail.msgid;
 	$.get(url, {msgid}).done(function(html){
 	    let details = parseMailDetails(msgid, html);
 	    if(details) {
 		// Add data from mail object
-		let mail = list.mails.find((mail) => mail.msgid == msgid);
 		details.msgid   = msgid;
 		details.from    = mail.from;
 		details.subject = mail.subject;
@@ -80,23 +85,31 @@ function getMailDetails(list, msgid) {
 }
 
 // Executes an action (accept, reject, discard) for a single mail
-function mailAction(action, list, msgid, csrf_token) {
+function mailAction(action, list, mail, isRepeat) {
     if(list.error) return;
-    var url = listUrl(list);
+    var url   = listUrl(list);
+    var msgid = mail.msgid;
+    var type  = mail.size ? "mail" : "join request"
+    var csrf_token = (type === "join request") ? list.csrf_token : mail.csrf_token;
 
-    // Get a CSRF Token before proceeding
+    // Try to get a CSRF Token before proceeding
+    // If this does not work, try without one
     if(csrf_token === undefined) {
-	getMailDetails(list, msgid).then(function(details) {
-	    mailAction(action, list, msgid, details.csrf_token);
-	});
-	return;
+	if(!isRepeat) {
+	    getMailDetails(list, mail).then(function(details) {
+		mailAction(action, list, details, true);
+	    });
+	    return;
+	}
     }
 
     // Convert action into its numeric value
     var value = 0;
     switch(action) {
 	case "accept":
-	    value = 1; break;
+	    // Note that accepting a join request uses a value of 4 instead of 1
+	    value = (type === "join request") ? 4 : 1;
+	    break;
 	case "reject":
 	    value = 2; break;
 	case "discard":
@@ -105,20 +118,20 @@ function mailAction(action, list, msgid, csrf_token) {
 	    action = "--";
 	    value = 0;
     }
-    console.log("Executing action " + action + " on message #" + msgid + " in list " + list.name);
+    console.log("Executing action " + action + " on " + type + " #" + msgid + " in list " + list.name);
     var data = {
 	csrf_token,
 	submit: "Submit Data ..."
     }
     data[msgid] = value;
+    data["comment-" + msgid] = '';
     console.log(data);
 
     // Send data to the server
     $.post(url, data, function(html) {
 	// We can directly parse the result and update the list object with it
 	parseAdmindb(list, html);
-	saveAll();
-	renderList(list);
+	saveList(list);
     });
 }
 
@@ -132,6 +145,7 @@ function prepareHtml(html) {
     html = html.replace(/^(.|\n)*?<body[^>]*>/i, '');
     html = html.replace(/<\/body(.|\n)*/i,       '');
     // Remove external content, such as scripts and images
+    // Scripts should be blocked by the content security policy, but better be safe than sorry
     html = html.replace(/<img[^>]*>/gi,                   '');
     html = html.replace(/<script(\n|.)*?(\/script>|$)/gi, '');
     html = html.replace(/<iframe(\n|.)*?(\/iframe>|$)/gi, '');
@@ -145,32 +159,62 @@ function parseAdmindb(list, html) {
     list.mails = [];
     if(result.find("form").length) {
 	// Parse e-mails for each group (mails by the same sender)
+	list.csrf_token = result.find('input[name="csrf_token"]').val();
 	result.find("form>table>tbody>tr").each(function(){
-	    var from = $(this).find("tbody>tr>td").html().match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+/i)[0];
-	    // Parse individual mail entries
-	    $(this).find("table table table").each(function(){
-		var mlink = $(this).find("a");
-		if(!mlink.length) {
-		    // E-mails have an anchor that points to the message detail page
-		    // Checking for this, we filter out all tables that don't
-		    // correspond to an actual e-mail
-		    return;
-		}
-		var msgid = mlink.attr("href").match(/[0-9]+$/)[0];
-		// The last column contains the information we need
-		var data  = $(this).find("td:last-child");
-		var mail  = {
-		    msgid,
-		    from,
-		    subject: $(data[0]).text(),
-		    size: Number.parseInt($(data[1]).text(), 10),
-		    time: $(data[3]).text()
-		};
-		list.mails.push(mail);
-	    });
+	    var row = $(this);
+	    if(row.find("table table").length) {
+		// this row is a mail group
+		parseAdmindbMailGroup(list, row);
+	    } else if (row.find('input[name^="ban-"]').length) {
+		// this row is a join request
+		parseAdmindbJoinRequest(list, row);
+	    }
 	});
     }
     result.empty();
+}
+
+function parseAdmindbJoinRequest(list, row) {
+    // Get user requesting join and optionally the name
+    var name = row.find("td em").text().trim();
+    row.find("td em").remove();
+    var from = row.find("td").first().text().trim();
+    from = name ? name + " (" + from + ")" : from;
+    // Get request ID: the name of the first radio button
+    var msgid = row.find(':radio').attr("name");
+    var mail  = {
+	msgid,
+	from,
+	subject: _("listJoinRequest"),
+	size: null,
+	time: null,
+    }
+    list.mails.push(mail);
+}
+
+function parseAdmindbMailGroup(list, row) {
+    var from = row.find("tbody>tr>td").html().match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+/i)[0];
+    // Parse individual mail entries
+    row.find("table table table").each(function(){
+	var mlink = $(this).find("a");
+	if(!mlink.length) {
+	    // E-mails have an anchor that points to the message detail page
+	    // Checking for this, we filter out all tables that don't
+	    // correspond to an actual e-mail
+	    return;
+	}
+	var msgid = mlink.attr("href").match(/[0-9]+$/)[0];
+	// The last column contains the information we need
+	var data  = $(this).find("td:last-child");
+	var mail  = {
+	    msgid,
+	    from,
+	    subject: $(data[0]).text(),
+	    size: Number.parseInt($(data[1]).text(), 10),
+	    time: $(data[3]).text()
+	};
+	list.mails.push(mail);
+    });
 }
 
 function parseMailDetails(msgid, html) {
