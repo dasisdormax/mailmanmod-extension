@@ -1,7 +1,9 @@
-# Mailmanmod WebExtension
+# Mailman Moderation (WebExtension)
 Manage and moderate all your mailman lists in one place
+- **Firefox:** Download from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mailmanmod)
 
 <img title="Main panel example" src="example.png" width="450px">
+
 
 ## WARNING
 This extension was created and tested only with one server (mailman v2.1.23, german language)
@@ -11,25 +13,26 @@ before using this add-on in production to prevent data loss.
 Mailman v3 uses a new web system and api and will most certainly not work. If you can provide me
 with a test installation, i'll try my best to update this extension for it.
 
+
 ## Features
-- Show pending messages in all your mailing lists
+- Stores your credentials (optionally in your browser's cloud) so you do not have to enter them everywhere again
+- Show pending messages and join requests in all your mailing lists
 - Display individual mail headers and content
 - Accept, Reject and Discard e-mails
 - Automatic background checks
 
+
 ## Limitations
 - Mailman v2 only
-- Synchronization cannot be turned off
-- Assumes that the moderation interface is located at *&lt;baseurl&gt;*/admindb/*&lt;listname&gt;*, which may or may not be the case for you
 
-## Installation
 
+## Manual Installation
 Note that you will have to repeat these steps each time you restart your browser. However, your browser should keep your storage across versions (only tested with FF). Export your settings regularly :)
 
 ### Firefox (current / ESR 52)
 - Clone this repository
 - In Firefox, enter the URL `about:debugging`
-- Click 'Load temporary add-on' and select the file 'manifest.json'
+- Click 'Load temporary add-on' and select the file 'manifest.json' in this directory
 
 ### Chromium / Google Chrome
 - Clone this repository

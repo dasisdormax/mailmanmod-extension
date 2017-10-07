@@ -44,7 +44,7 @@ function bgRefreshAll() {
 /******************
  * INITIALIZATION *
  ******************/
-var context = "[BACKGROUND]";
+var context = "[BKGND]";
 
 $(function(){
     loadAll();

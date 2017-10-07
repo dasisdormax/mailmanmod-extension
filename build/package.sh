@@ -28,7 +28,8 @@ FILES=(
     html/popup.html
     css/options.css
     css/popup.css
-    js/lists.js
+    js/common.js
+    js/storage.js
     js/network.js
     js/background.js
     js/options.js

@@ -95,7 +95,7 @@ function status(text) {
 /******************
  * INITIALIZATION *
  ******************/
-var context = "[OPTIONS]";
+var context = "[OPTNS]";
 
 $(function(){
     $("body").html(localizeHtml);

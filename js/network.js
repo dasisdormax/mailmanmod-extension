@@ -23,29 +23,29 @@
  *******************/
 
 // Checks if a list exists, without sending the password
-function checkList(list, update) {
+function checkList(list, oldList) {
     console.log("Checking list " + list.name + " ...");
     var url = listUrl(list) + "/logout";
     // The function executed when the request fails OR does not land on an admin page
     var onError = function() {
-	list.exists = false;
-	list.error = "listErrNotFound";
-	list.time = new Date().getTime();
-	if(!update) {
+	if(!oldList && list.baseurl.search("/admindb$") === -1) {
+	    var newList = copyList(list);
+	    newList.id      = list.id;
+	    newList.baseurl = list.baseurl + "/admindb";
+	    checkList(newList, list);
+	} else {
+	    if(oldList) list = oldList;
+	    list.exists = false;
+	    list.error  = "listErrNotFound";
+	    list.time   = new Date().getTime();
 	    saveList(list);
-	    if (list.baseurl.search("/admindb$") === -1) {
-		var newList = copyList(list);
-		newList.id      = list.id;
-		newList.baseurl = list.baseurl + "/admindb";
-		checkList(newList, true);
-	    }
 	}
     };
     // NOTE: /logout should show the login page, without sending an error code
     $.get(url, {}, function(html){
 	if(parseLoginPage(html)) {
 	    list.exists = true;
-	    if(update)
+	    if(oldList)
 		updateCredential(list);
 	    else
 		saveList(list);

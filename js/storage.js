@@ -220,7 +220,7 @@ var deleteCredentialWithId;
 	    name:      list.name,
 	    baseurl:   list.baseurl,
 	    password:  list.password,
-	    checked:   list.checked,
+	    exists:    list.exists,
 	    changedAt: new Date().getTime()
 	};
 	saveList(list);
