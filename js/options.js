@@ -24,7 +24,8 @@
 // NOTE: we cannot put these function into the popup directly as it would
 // get closed when opening the file chooser dialog
 
-function doImport(file) {
+function doImport() {
+    var file = this.files[0];
     if(!file || file.type.search(/json/) < 0) {
 	status(_('errImportFiletype'));
 	return;
@@ -61,7 +62,7 @@ function doExport() {
     var tmp = [];
     lists.forEach((list) => tmp.push({
 	name: list.name,
-	baseurl: list.baseurl,
+	baseurl: list.baseurl.replace(/\/admindb$/, ""),
 	password: list.password
     }));
     var json = JSON.stringify(tmp, null, 2);
@@ -82,19 +83,6 @@ function openFileChooser() {
     $("#import-file").click();
 }
 
-function beginImport() {
-    var file = this.files[0];
-    // TODO: listen to changes and remove loadAll()
-    loadAll();
-    setTimeout(doImport, 1000, file);
-}
-
-function beginExport() {
-    // TODO: listen to changes and remove loadAll()
-    loadAll();
-    setTimeout(doExport, 1000);
-}
-
 function status(text) {
     if(text) {
 	$("#status").removeClass("hidden");
@@ -113,8 +101,9 @@ $(function(){
     $("body").html(localizeHtml);
     $("#status").click(() => status(""));
     $("#import").click(openFileChooser);
-    $("#export").click(beginExport);
+    $("#export").click(doExport);
     $("#clearSync").click(doClearSync);
     $("#useSync").change(toggleUseSync);
-    $("#import-file").change(beginImport);
+    $("#import-file").change(doImport);
+    loadAll();
 });

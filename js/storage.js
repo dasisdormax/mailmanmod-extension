@@ -29,6 +29,7 @@ function loadAll() {
 	if(!handleError("errStorageAccess")) return;
 
 	readItems(items);
+	status('');
 
 	if(settings.hasSync === undefined || settings.useSync) {
 	    // Check if the sync storage is supported and read its settings
@@ -89,93 +90,149 @@ function readItems(items) {
     updateIcon();
 }
 
-function saveSettings() {
-    chrome.storage.local.set({settings}, handleError);
-    if(settings.hasSync && settings.useSync)
-	chrome.storage.sync.set({settings}, suppressError);
-}
+var saveSettings;
+var saveList;
+var saveAll;
+var updateCredential;
+var deleteCredentialWithId;
 
-function updateCredential(list) {
-    list = {
-	id:        list.id,
-	name:      list.name,
-	baseurl:   list.baseurl,
-	password:  list.password,
-	changedAt: new Date().getTime()
+// Create an isolated environment for storage operations
+(function(){
+    //
+    // PRIVATE SECTION
+    //
+    var ownChanges = [];
+
+    var set = function(storage, object, handler) {
+	for(name in object) {
+	    ownChanges.push({name, value: object[name]});
+	}
+	storage.set(object, handler);
     };
-    updateList(list);
-}
 
-function deleteCredentialWithId(id) {
-    console.log("Removing credential ", id);
-    lists = lists.filter((list) => list.id !== id);
-    var key = "list_" + id;
-    chrome.storage.local.remove(key, handleError);
-    if(settings.hasSync && settings.useSync)
-	chrome.storage.sync.remove(key, suppressError);
-    updateIcon();
-}
+    var setLocal = function(object) {
+	set(chrome.storage.local, object, handleError);
+    };
 
-function saveList(list) {
-    if(updateList(list) === -1) return;
-    var key = "list_" + list.id;
-    var obj = {};
-    obj[key] = list;
-    chrome.storage.local.set(obj, handleError);
-    updateIcon();
-}
+    var setAll = function(object) {
+	setLocal(object);
+	if(settings.hasSync && settings.useSync)
+	    set(chrome.storage.sync, object, suppressError);
+    };
 
-function saveAll() {
-    // Sync to persistent storage and background task
-    var listObj = {};
-    lists.forEach(function(list) {
-	var key = "list_" + list.id;
-	listObj[key] = list;
-    });
-    chrome.storage.local.set(listObj, handleError);
-    updateIcon();
-}
+    (function(){
+	var isOwnChange = function(name, change) {
+	    var keys = change.newValue ? Object.keys(change.newValue).sort() : [];
+	    var i;
+	    ocloop: for(i = 0; i < ownChanges.length; i++) {
+		// Test name
+		let oc = ownChanges[i];
+		if(oc.name != name)
+		    continue ocloop;
 
-// React to storage change events
-function handleStorageChanges(changes, area) {
-    var key;
-    if(area == 'sync' && settings.useSync) {
-	for(key in changes) {
-	    let change = changes[key];
-	    if(key.indexOf('list_') !== 0 || isUnchanged(change))
-		continue;
-	    console.log(area, key, change);
-	    if( change.newValue && key == 'list_' + change.newValue.id)
-		saveList(change.newValue);
-	    if(!change.newValue && key == 'list_' + change.oldValue.id)
-		deleteCredentialWithId(change.oldValue.id);
-	    updateIcon();
-	}
-    }
-    if(area == 'local') {
-	for(key in changes) {
-	    let change = changes[key];
-	    if(key.indexOf('list_') !== 0 || isUnchanged(change))
-		continue;
-	    console.log(context, area, key, change);
-	    if( change.newValue && key == 'list_' + change.newValue.id)
-		updateList(changes[key].newValue);
-	    if(!change.newValue && key == 'list_' + change.oldValue.id)
-		lists = lists.filter((list) => list.id !== change.oldValue.id);
-	    updateIcon();
-	}
-    }
-}
+		// Test keys and their values
+		let ok = Object.keys(oc.value).sort();
+		if(ok.length !== keys.length);
+		let j;
+		keyloop: for(j in ok) {
+		    let key = keys[j];
+		    if(key !== ok[j])
+			continue ocloop;
 
-function isUnchanged(change) {
-    var newKeys = change.newValue ? Object.keys(change.newValue).sort() : [];
-    var oldKeys = change.oldValue ? Object.keys(change.oldValue).sort() : [];
-    if(newKeys !== oldKeys)
-	return false;
+		    // Note: As equal arrays compare to false, assume two arrays to be equal
+		    if(Array.isArray(change.newValue[key]) && Array.isArray(oc.value[key]))
+			continue keyloop;
 
-    var key;
-    for(key in change.newValue)
-	if(change.newValue[key] !== change.oldValue[key])
+		    if(change.newValue[key] !== oc.value[key])
+			continue ocloop;
+		}
+
+		ownChanges.splice(i, 1);
+		return true;
+	    }
 	    return false;
-    return true;
-}
+	};
+
+	// React to storage change events
+	var handleStorageChanges = function(changes, area) {
+	    var key;
+	    if(area == 'sync' && settings.useSync) {
+		for(key in changes) {
+		    let change = changes[key];
+		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
+			continue;
+		    console.log(area, key, change);
+		    if( change.newValue && key == 'list_' + change.newValue.id)
+			saveList(change.newValue);
+		    if(!change.newValue && key == 'list_' + change.oldValue.id)
+			deleteCredentialWithId(change.oldValue.id);
+		    updateIcon();
+		}
+	    }
+	    if(area == 'local') {
+		for(key in changes) {
+		    let change = changes[key];
+		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
+			continue;
+		    console.log(context, area, key, change);
+		    if( change.newValue && key == 'list_' + change.newValue.id)
+			updateList(changes[key].newValue);
+		    if(!change.newValue && key == 'list_' + change.oldValue.id)
+			lists = lists.filter((list) => list.id !== change.oldValue.id);
+		    updateIcon();
+		}
+	    }
+	};
+	// Listen to storage changes
+	chrome.storage.onChanged.addListener(handleStorageChanges);
+    })();
+
+    //
+    // PUBLIC SECTION
+    //
+    saveSettings = function() {
+	setAll({settings});
+    };
+
+    saveList = function(list) {
+	if(updateList(list) === -1) return;
+	var key = "list_" + list.id;
+	var obj = {};
+	obj[key] = list;
+	setLocal(obj);
+	updateIcon();
+    };
+
+    saveAll = function() {
+	// Sync to persistent storage and background task
+	var listObj = {};
+	lists.forEach(function(list) {
+	    var key = "list_" + list.id;
+	    listObj[key] = list;
+	});
+	setLocal(listObj);
+	updateIcon();
+    };
+
+    updateCredential = function(list) {
+	list = {
+	    id:        list.id,
+	    name:      list.name,
+	    baseurl:   list.baseurl,
+	    password:  list.password,
+	    checked:   list.checked,
+	    changedAt: new Date().getTime()
+	};
+	saveList(list);
+    };
+
+    deleteCredentialWithId = function(id) {
+	console.log("Removing credential ", id);
+	lists = lists.filter((list) => list.id !== id);
+	var key = "list_" + id;
+	chrome.storage.local.remove(key, handleError);
+	if(settings.hasSync && settings.useSync)
+	    chrome.storage.sync.remove(key, suppressError);
+	updateIcon();
+    };
+})();

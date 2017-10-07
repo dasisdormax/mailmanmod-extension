@@ -41,14 +41,19 @@ function actionDelete(id) {
 	return;
     }
     deleteCredentialWithId(id);
-    showLists();
+    renderAll();
 }
 
 function actionRefresh() {
     // Resetting list.time will cause the list to be refreshed
     // when rendering the next time
-    lists.forEach((list) => {list.time = null;});
-    showLists();
+    lists.forEach(function(list) {
+	list.mails  = [];
+	list.time   = null;
+	if(!list.exists)
+	    list.exists = undefined;
+    });
+    renderAll();
 }
 
 // Execute an action on the selected mailinglist
@@ -96,7 +101,7 @@ function detailActionClick() {
     mail.csrf_token = $("#mail-csrftoken").val();
     var action      = $(this).attr("data-mailaction");
     mailAction(action, list, mail);
-    showLists();
+    select("#main");
 }
 
 // Save the changes made to a mailinglist on the edit/create page
@@ -114,6 +119,7 @@ function editSaveClick() {
 	status(_(error));
     } else {
 	updateCredential(list);
+	select("#main");
     }
 }
 
@@ -262,12 +268,10 @@ var context = "[POPUP]";
 $(function() {
     $("body").html(localizeHtml);
     $("#mmm-list-perform-action").click(listActionClick);
-    $("#mmm-edit-save").click(editSaveClick);
-    $("#mmm-options").click(optionsClick);
-    $("#status").click(() => status(''));
-    $("button[data-cancel]").click(showLists);
-    $("button[data-mailaction]").click(detailActionClick);
-    chrome.storage.onChanged.addListener(handleStorageChanges);
-    showLists();
+    $("#mmm-edit-save"          ).click(editSaveClick);
+    $("#mmm-options"            ).click(optionsClick);
+    $("#status"                 ).click(() => status(''));
+    $("button[data-cancel]"     ).click(() => select("#main"));
+    $("button[data-mailaction]" ).click(detailActionClick);
     loadAll();
 });

@@ -48,8 +48,6 @@ var context = "[BACKGROUND]";
 
 $(function(){
     loadAll();
-    // Listen to storage changes
-    chrome.storage.onChanged.addListener(handleStorageChanges);
     // Execute our background update right now and every 2 minutes
     setTimeout(bgRefreshAll, 5000);
     setInterval(bgRefreshAll, 120000);

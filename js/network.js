@@ -22,8 +22,46 @@
  * Network actions *
  *******************/
 
+// Checks if a list exists, without sending the password
+function checkList(list, update) {
+    console.log("Checking list " + list.name + " ...");
+    var url = listUrl(list) + "/logout";
+    // The function executed when the request fails OR does not land on an admin page
+    var onError = function() {
+	list.exists = false;
+	list.error = "listErrNotFound";
+	list.time = new Date().getTime();
+	if(!update) {
+	    saveList(list);
+	    if (list.baseurl.search("/admindb$") === -1) {
+		var newList = copyList(list);
+		newList.id      = list.id;
+		newList.baseurl = list.baseurl + "/admindb";
+		checkList(newList, true);
+	    }
+	}
+    };
+    // NOTE: /logout should show the login page, without sending an error code
+    $.get(url, {}, function(html){
+	if(parseLoginPage(html)) {
+	    list.exists = true;
+	    if(update)
+		updateCredential(list);
+	    else
+		saveList(list);
+	} else {
+	    onError();
+	}
+    }).fail(onError);
+}
+
 // Updates a single list object
 function refreshList(list) {
+    if(!list.exists) {
+	if(list.exists === undefined)
+	    checkList(list);
+	return;
+    }
     console.log("Refreshing list " + list.name + " ...");
     var url = listUrl(list);
     var data = {
@@ -35,6 +73,7 @@ function refreshList(list) {
 	parseAdmindb(list, html);
 	saveList(list);
     }).fail(function(request){
+	console.log(context, "Error refreshing list " + list.name + ". Request object:", request);
 	switch(request.status) {
 	    case 401:
 		list.error = 'listErrBadPassword'; break;
@@ -150,6 +189,14 @@ function prepareHtml(html) {
     html = html.replace(/<script(\n|.)*?(\/script>|$)/gi, '');
     html = html.replace(/<iframe(\n|.)*?(\/iframe>|$)/gi, '');
     return html;
+}
+
+function parseLoginPage(html) {
+    var result = $("#result");
+    result.html(prepareHtml(html));
+    if(result.find('input[name="adminpw"]'))
+	return true;
+    return false;
 }
 
 function parseAdmindb(list, html) {

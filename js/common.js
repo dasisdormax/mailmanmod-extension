@@ -71,7 +71,7 @@ function updateList(newlist) {
 };
 
 function listUrl(list) {
-    return list.baseurl + "/admindb/" + list.name;
+    return list.baseurl + "/" + list.name;
 }
 
 // Checks a list object for errors
