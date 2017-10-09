@@ -60,7 +60,7 @@ function actionRefresh() {
 function listActionClick() {
     var id = $("input[name=listid]:checked").val();
     var action = $("#mmm-select-action").val();
-    console.log("Executing action " + action + " on item " + id + " ...");
+    console.log(context, "Executing action " + action + " on item " + id + " ...");
     switch(action) {
 	case "new":
 	    actionNew(id); break;

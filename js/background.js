@@ -19,13 +19,27 @@
  */
 
 function status(text) {
-    if(text) console.log(text);
+    if(text) console.log(context, "Status: " + text);
 }
 
-/*******************
- * BACKGROUND TASK *
- *******************/
+// RenderList -> executed when a list is loaded or updated from storage
+// Refreshes this list if the last refresh is more than 30 minutes ago
+function renderList(list) {
+    scheduleNextRefresh();
+    // Note: This condition should make sure that we do not refresh the same time
+    // that the popup does
+    if(list.time && list.exists && new Date().getTime() - list.time > 1800000) {
+	refreshList(list);
+    } else {
+	updateIcon();
+    }
+}
+
+/**********************
+ * BACKGROUND REFRESH *
+ **********************/
 function bgRefreshAll() {
+    scheduleNextRefresh();
     // the sorting makes sure that the oldest lists are updated first
     var sorted = lists.sort((a, b) => a.time > b.time ? 1 : -1);
     var time = new Date().getTime();
@@ -33,12 +47,20 @@ function bgRefreshAll() {
 	let list = sorted[i];
 	let diff = list.time ? time - list.time : 1e12;
 
-	// Background update with a lower frequency -> once every 20 minutes
-	if(diff > 1200000) refreshList(list);
-	// Don't update more than one list in one go, except if they
-	// are 'seriously outdated' (currently, more than 50 minutes)
-	if(diff < 3000000) return;
+	// Background update with a lower frequency -> once every 15 minutes
+	if(diff >  900000) refreshList(list);
+	// Using this, the lists are not refreshed all at once, but no list
+	// refresh will be more than 30 minutes ago. 
+	if(diff < 1800000) return;
     }
+}
+
+var timeout;
+function scheduleNextRefresh() {
+    if(timeout !== undefined)
+	clearTimeout(timeout);
+    // Refresh once every minute
+    timeout = setTimeout(bgRefreshAll, 60000);
 }
 
 /******************
@@ -48,7 +70,4 @@ var context = "[BKGND]";
 
 $(function(){
     loadAll();
-    // Execute our background update right now and every 2 minutes
-    setTimeout(bgRefreshAll, 5000);
-    setInterval(bgRefreshAll, 120000);
 });

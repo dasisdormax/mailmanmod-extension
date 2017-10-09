@@ -24,7 +24,7 @@
 
 // Checks if a list exists, without sending the password
 function checkList(list, oldList) {
-    console.log("Checking list " + list.name + " ...");
+    console.log(context, "Checking if list '" + list.name + "' exists ...");
     var url = listUrl(list) + "/logout";
     // The function executed when the request fails OR does not land on an admin page
     var onError = function() {
@@ -62,7 +62,7 @@ function refreshList(list) {
 	    checkList(list);
 	return;
     }
-    console.log("Refreshing list " + list.name + " ...");
+    console.log(context, "Refreshing list '" + list.name + "' ...");
     var url = listUrl(list);
     var data = {
 	adminpw:  list.password,
@@ -73,7 +73,7 @@ function refreshList(list) {
 	parseAdmindb(list, html);
 	saveList(list);
     }).fail(function(request){
-	console.log(context, "Error refreshing list " + list.name + ". Request object:", request);
+	console.log(context, "Error refreshing list '" + list.name + "', request object:", request);
 	switch(request.status) {
 	    case 401:
 		list.error = 'listErrBadPassword'; break;
@@ -157,14 +157,14 @@ function mailAction(action, list, mail, isRepeat) {
 	    action = "--";
 	    value = 0;
     }
-    console.log("Executing action " + action + " on " + type + " #" + msgid + " in list " + list.name);
+    console.log(context, "Executing action " + action + " on " + type + " #" + msgid + " in list " + list.name);
     var data = {
 	csrf_token,
 	submit: "Submit Data ..."
     }
     data[msgid] = value;
     data["comment-" + msgid] = '';
-    console.log(data);
+    console.log(context, "POST data:", data);
 
     // Send data to the server
     $.post(url, data, function(html) {

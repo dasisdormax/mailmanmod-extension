@@ -161,7 +161,7 @@ var deleteCredentialWithId;
 		    let change = changes[key];
 		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
 			continue;
-		    console.log(area, key, change);
+		    console.log(context, area + " '" + key + "' changed:", change);
 		    if( change.newValue && key == 'list_' + change.newValue.id)
 			saveList(change.newValue);
 		    if(!change.newValue && key == 'list_' + change.oldValue.id)
@@ -174,7 +174,7 @@ var deleteCredentialWithId;
 		    let change = changes[key];
 		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
 			continue;
-		    console.log(context, area, key, change);
+		    console.log(context, area + " '" + key + "' changed:", change);
 		    if( change.newValue && key == 'list_' + change.newValue.id)
 			updateList(changes[key].newValue);
 		    if(!change.newValue && key == 'list_' + change.oldValue.id)
@@ -227,7 +227,7 @@ var deleteCredentialWithId;
     };
 
     deleteCredentialWithId = function(id) {
-	console.log("Removing credential ", id);
+	console.log(context, "Removing credential ", id);
 	lists = lists.filter((list) => list.id !== id);
 	var key = "list_" + id;
 	chrome.storage.local.remove(key, handleError);

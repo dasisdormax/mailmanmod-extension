@@ -42,7 +42,7 @@ function doImport() {
 		if(listHasError(list)) throw 5;
 		var newlist = newList();
 		newlist.name     = list.name;
-		newlist.baseurl  = list.baseurl;
+		newlist.baseurl  = list.baseurl + (list.compatible ? "/admindb" : '');
 		newlist.password = list.password;
 		tmp.push(newlist);
 	    });
@@ -60,11 +60,17 @@ function doExport() {
     // Create temporary array to store only
     // the important properties for each list
     var tmp = [];
-    lists.forEach((list) => tmp.push({
-	name: list.name,
-	baseurl: list.baseurl.replace(/\/admindb$/, ""),
-	password: list.password
-    }));
+    lists.forEach(function(list) {
+	var exp = {
+	    name: list.name,
+	    baseurl: list.baseurl.replace(/\/admindb$/, ""),
+	    password: list.password
+	};
+	if(list.baseurl.search(/\/admindb$/) > -1) {
+	    exp.compatible = true;
+	}
+	tmp.push(exp);
+    });
     var json = JSON.stringify(tmp, null, 2);
     // Create data url to download the JSON from
     var dataurl = "data:text/json;base64," + btoa(json);
