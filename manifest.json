@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "0.5.4",
+    "version": "0.5.5",
 
     "description": "__MSG_extensionDescription__",
     "homepage_url": "https://github.com/dasisdormax/mailmanmod-webextension",
@@ -20,6 +20,7 @@
     },
     
     "browser_action": {
+	"browser_style": false,
 	"default_icon": "icons/mmm-96.png",
 	"default_title": "__MSG_extensionName__",
 	"default_popup": "html/popup.html"
@@ -30,6 +31,7 @@
     },
 
     "options_ui": {
+	"browser_style": false,
 	"page": "html/options.html"
     },
 

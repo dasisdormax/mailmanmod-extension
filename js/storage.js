@@ -31,7 +31,7 @@ function loadAll() {
 	readItems(items);
 	status('');
 
-	if(settings.hasSync === undefined || settings.useSync) {
+	if(settings.hasSync === undefined || (settings.useSync && context === "[BKGND]")) {
 	    // Check if the sync storage is supported and read its settings
 	    if(chrome.storage.sync) {
 		chrome.storage.sync.get(null, function(syncItems) {
@@ -60,7 +60,9 @@ function readItems(items) {
     if(!items) return;
 
     // Read settings, if stored
-    if(items.settings) settings = items.settings;
+    if(items.settings && !settings.hasSync) {
+	settings = items.settings;
+    }
 
     var key;
     for(key in items) {
@@ -110,6 +112,11 @@ var deleteCredentialWithId;
 	storage.set(object, handler);
     };
 
+    var remove = function(storage, name, handler) {
+	ownChanges.push({name, value: undefined});
+	storage.remove(name, handler);
+    };
+
     var setLocal = function(object) {
 	set(chrome.storage.local, object, handleError);
     };
@@ -118,6 +125,17 @@ var deleteCredentialWithId;
 	setLocal(object);
 	if(settings.hasSync && settings.useSync)
 	    set(chrome.storage.sync, object, suppressError);
+    };
+
+    var removeAll = function(name) {
+	remove(chrome.storage.local, name, handleError);
+	if(settings.hasSync && settings.useSync)
+	    remove(chrome.storage.sync, name, suppressError);
+    };
+
+    var deleteListLocally = function(id) {
+	lists = lists.filter((list) => list.id !== id);
+	if(typeof unrenderListById === 'function') unrenderListById(id);
     };
 
     (function(){
@@ -129,6 +147,9 @@ var deleteCredentialWithId;
 		let oc = ownChanges[i];
 		if(oc.name != name)
 		    continue ocloop;
+
+		// Do not test further if both values are undefined
+		if(oc.value === change.newValue) return true;
 
 		// Test keys and their values
 		let ok = Object.keys(oc.value).sort();
@@ -156,30 +177,43 @@ var deleteCredentialWithId;
 	// React to storage change events
 	var handleStorageChanges = function(changes, area) {
 	    var key;
-	    if(area == 'sync' && settings.useSync) {
+	    if(area == 'sync' && settings.useSync && context === "[BKGND]") {
 		for(key in changes) {
 		    let change = changes[key];
-		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
+		    if(isOwnChange(key, change))
 			continue;
 		    console.log(context, area + " '" + key + "' changed:", change);
-		    if( change.newValue && key == 'list_' + change.newValue.id)
-			saveList(change.newValue);
-		    if(!change.newValue && key == 'list_' + change.oldValue.id)
-			deleteCredentialWithId(change.oldValue.id);
-		    updateIcon();
+
+		    if(key === 'settings' && change.newValue) {
+			// Update settings
+			settings = change.newValue;
+		    }
+
+		    else if(key.indexOf('list_') === 0) {
+			// Update a list
+			if( change.newValue && key == 'list_' + change.newValue.id)
+			    saveList(change.newValue);
+			if(!change.newValue && key == 'list_' + change.oldValue.id)
+			    deleteCredentialWithId(change.oldValue.id);
+			updateIcon();
+		    }
 		}
 	    }
 	    if(area == 'local') {
 		for(key in changes) {
 		    let change = changes[key];
-		    if(key.indexOf('list_') !== 0 || isOwnChange(key, change))
+		    if(isOwnChange(key, change))
 			continue;
 		    console.log(context, area + " '" + key + "' changed:", change);
-		    if( change.newValue && key == 'list_' + change.newValue.id)
-			updateList(changes[key].newValue);
-		    if(!change.newValue && key == 'list_' + change.oldValue.id)
-			lists = lists.filter((list) => list.id !== change.oldValue.id);
-		    updateIcon();
+
+		    if(key.indexOf('list_') === 0) {
+			// Update a list that has been changed by another local script
+			if( change.newValue && key == 'list_' + change.newValue.id)
+			    updateList(changes[key].newValue);
+			if(!change.newValue && key == 'list_' + change.oldValue.id)
+			    deleteListLocally(change.oldValue.id);
+			updateIcon();
+		    }
 		}
 	    }
 	};
@@ -191,7 +225,8 @@ var deleteCredentialWithId;
     // PUBLIC SECTION
     //
     saveSettings = function() {
-	setAll({settings});
+	var obj = { settings };
+	setAll(obj);
     };
 
     saveList = function(list) {
@@ -227,12 +262,10 @@ var deleteCredentialWithId;
     };
 
     deleteCredentialWithId = function(id) {
-	console.log(context, "Removing credential ", id);
-	lists = lists.filter((list) => list.id !== id);
 	var key = "list_" + id;
-	chrome.storage.local.remove(key, handleError);
-	if(settings.hasSync && settings.useSync)
-	    chrome.storage.sync.remove(key, suppressError);
+	console.log(context, "Removing '" + key + "'");
+	deleteListLocally(id);
+	removeAll(key);
 	updateIcon();
     };
 })();

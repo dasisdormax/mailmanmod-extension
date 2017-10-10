@@ -41,7 +41,6 @@ function actionDelete(id) {
 	return;
     }
     deleteCredentialWithId(id);
-    renderAll();
 }
 
 function actionRefresh() {
@@ -182,6 +181,10 @@ function renderList(list, index) {
 	}
     }
     $(label).prepend('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">');
+}
+
+function unrenderListById(id) {
+    $("div#d-" + id).remove();
 }
 
 function renderMailDetails(list, details) {

@@ -129,6 +129,18 @@
 	"message": "Export",
 	"description": "The caption for the export lists button"
     },
+    "buttonClearLists": {
+	"message": "Clear all lists",
+	"description": "The caption for the clear all lists button"
+    },
+    "buttonClearListsConfirm": {
+	"message": "Yes, I am sure!",
+	"description": "The caption for the button to confirm the clear operation"
+    },
+    "warningClearLists": {
+	"message": "This will remove all lists and their login credentials. If cloud synchronization is enabled, this also affects the cloud data — Click this message to cancel.",
+	"description": "The warning displayed before deleting all lists"
+    },
     "mailFrom": {
 	"message": "From: $1",
 	"description": "The mail from field name"
@@ -193,6 +205,10 @@
 	"message": "Import Error: The provided file contains invalid data!",
 	"description": "The error displayed when the provided file could not be parsed as mailing lists correctly"
     },
+    "errClearError": {
+	"message": "Error: One or more records could not be deleted!",
+	"description": "The error displayed when a list could not be deleted"
+    },
     "statusLoading": {
 	"message": "Loading ...",
 	"description": "The status message displayed when loading the popup"
@@ -200,5 +216,13 @@
     "statusImportSuccessful": {
 	"message": "Import completed successfully. Imported records: $1",
 	"description": "The message displayed after a successful import"
+    },
+    "statusClearSuccessful": {
+	"message": "Deleted $1 records successfully.",
+	"description": "The message displayed after a successful clear"
+    },
+    "settingUseSync": {
+	"message": "Sync credentials with your browser's cloud",
+	"description": "The text displayed on the use sync checkbox"
     }
 }

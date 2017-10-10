@@ -37,18 +37,17 @@ function doImport() {
 	    var json = event.target.result;
 	    var parsed = JSON.parse(json);
 	    if(!Array.isArray(parsed)) throw 5;
-	    var tmp = [];
-	    parsed.forEach(function(list) {
-		if(listHasError(list)) throw 5;
-		var newlist = newList();
-		newlist.name     = list.name;
-		newlist.baseurl  = list.baseurl + (list.compatible ? "/admindb" : '');
-		newlist.password = list.password;
-		tmp.push(newlist);
-	    });
-	    lists = tmp;
-	    status(_("statusImportSuccessful", tmp.length));
-	    saveAll();
+	    var i;
+	    for(i = 0; i < parsed.length; i++) {
+		let item = parsed[i];
+		if(listHasError(item)) throw 5;
+		let list = lists.find((list) => list.name === item.name) || newList();
+		list.name     = item.name;
+		list.baseurl  = item.baseurl + (item.compatible ? "/admindb" : '');
+		list.password = item.password;
+		updateCredential(list);
+	    }
+	    status(_("statusImportSuccessful", i));
 	} catch(ex) {
 	    status(_("errImportParseError"));
 	}
@@ -77,16 +76,42 @@ function doExport() {
     download(dataurl, "mmm.json", "text/json");
 }
 
-function doClearSync() {
-    chrome.storage.sync.clear(suppressError);
+function promptClearLists() {
+    status(_("warningClearLists"));
+    $("#clearListsConfirm").removeClass("hidden");
+    $("#clearLists").addClass("hidden");
+}
+
+function doClearLists() {
+    var origLength = lists.length;
+    var length = origLength;
+    while(length) {
+	deleteCredentialWithId(lists[0].id);
+	if(--length != lists.length) {
+	    status(_("errClearError"));
+	    return;
+	}
+    }
+    statusClick();
+    status(_("statusClearSuccessful", [origLength]));
 }
 
 function toggleUseSync(event) {
     // Do interesting stuff here
+    var checked = $("#useSync")[0].checked;
+    if(checked == settings.useSync) return;
+    settings.useSync = checked;
+    saveSettings();
 }
 
 function openFileChooser() {
     $("#import-file").click();
+}
+
+function statusClick() {
+    $("#clearListsConfirm").addClass("hidden");
+    $("#status").addClass("hidden");
+    status('');
 }
 
 function status(text) {
@@ -94,7 +119,8 @@ function status(text) {
 	$("#status").removeClass("hidden");
 	$("#status").text(text);
     } else {
-	$("#status").addClass("hidden");
+	$("#useSync")[0].checked = settings.useSync;
+	$("#clearLists").removeClass("hidden");
     }
 }
 
@@ -105,10 +131,11 @@ var context = "[OPTNS]";
 
 $(function(){
     $("body").html(localizeHtml);
-    $("#status").click(() => status(""));
+    $("#status").click(statusClick);
     $("#import").click(openFileChooser);
     $("#export").click(doExport);
-    $("#clearSync").click(doClearSync);
+    $("#clearLists").click(promptClearLists);
+    $("#clearListsConfirm").click(doClearLists);
     $("#useSync").change(toggleUseSync);
     $("#import-file").change(doImport);
     loadAll();

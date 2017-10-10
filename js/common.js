@@ -66,7 +66,7 @@ function updateList(newlist) {
 	}
     }
     // Render the updated list and pass the index as hint to where to place it
-    if(typeof renderList == 'function') renderList(newlist, index);
+    if(typeof renderList === 'function') renderList(newlist, index);
     return index;
 };
 

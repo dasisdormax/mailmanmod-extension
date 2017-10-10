@@ -19,7 +19,7 @@
  */
 
 function status(text) {
-    if(text) console.log(context, "Status: " + text);
+    if(text) console.log(context, "Status: '" + text + "'");
 }
 
 // RenderList -> executed when a list is loaded or updated from storage
