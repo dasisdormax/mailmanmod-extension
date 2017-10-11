@@ -49,29 +49,43 @@ function getListById(id) {
 // Add a list to the global lists array or update it
 // - Makes sure that the list stays sorted with respect to the list names
 // - Returns the index of the inserted or updated element, or -1
-// NOTE that two lists cannot have the same name
-function updateList(newlist) {
-    var index = lists.findIndex((list) => list.id == newlist.id);
-    if(index >= 0) {
-	lists[index] = newlist;
-    } else {
-	index = lists.findIndex((list) => list.name >= newlist.name);
-	if(index === -1) {
-	    index = lists.length;
-	    lists.push(newlist);
-	} else if(lists[index].name === newlist.name) {
-	    return -1;
-	} else {
-	    lists.splice(index, 0, newlist);
+// NOTE that if a different list with an already existing name is provided,
+// the newer list is kept and the older one is deleted
+function updateList(list) {
+    var nameAt = lists.findIndex((other) => other.name >= list.name);
+    var idAt   = lists.findIndex((other) => other.id   == list.id);
+    var index  = -1;
+    if(nameAt >= 0 && lists[nameAt].name == list.name && idAt !== nameAt) {
+	// The new list has the same name, but a different ID
+	console.log(context, "Merging two lists with the same name '" + list.name + "'");
+	var delId = list.id;
+	if(list.changedAt > lists[nameAt].changedAt) {
+	    list.id = lists[nameAt].id;
+	    lists[nameAt] = list;
+	    updateCredential(list);
 	}
+	deleteCredentialWithId(delId);
+    } else if(idAt >= 0) {
+	// The new list is an update to a previous list
+	index = idAt;
+	lists[idAt] = list;
+    } else if(nameAt >= 0) {
+	// This is a new list that is inserted somewhere in the middle
+	index = nameAt;
+	lists.splice(index, 0, list);
+    } else {
+	// This is a new list that is added to the end
+	index = lists.length;
+	lists.push(list);
     }
+
     // Render the updated list and pass the index as hint to where to place it
-    if(typeof renderList === 'function') renderList(newlist, index);
+    if(typeof renderList === 'function' && index >= 0) renderList(list, index);
     return index;
 };
 
 function listUrl(list) {
-    return list.baseurl + "/" + list.name;
+    return list.baseurl + "/" + list.name.replace(/@.*$/, '');
 }
 
 // Checks a list object for errors
@@ -79,7 +93,7 @@ function listUrl(list) {
 function listHasError(list) {
     if (!list.name)
 	return "errListNameEmpty";
-    if (list.name.search(/[/?.]/) !== -1)
+    if (list.name.search(/[/?]/) !== -1)
 	return "errListNameIllegal";
     if (list.baseurl.search(/^https?:\/\//) !== 0)
 	return "errListBaseurlProtocol";
@@ -111,7 +125,7 @@ var __ = (msg, args) => $("<div>").text(_(msg, args)).html();
 function handleError(pattern) {
     if(chrome.runtime.lastError) {
 	if(pattern && typeof pattern == 'string')
-	    status(_(pattern, chrome.runtime.lastError.message));
+	    status(_(pattern, [chrome.runtime.lastError.message]));
 	else
 	    status(chrome.runtime.lastError.message);
 	return false;

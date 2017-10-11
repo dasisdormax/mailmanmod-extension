@@ -22,79 +22,12 @@
  * List storage *
  ****************/
 
-// Load all lists from the addon storage and execute function then when done
-function loadAll() {
-    chrome.storage.local.get(null, function(items){
-	// We cannot proceed when the local storage is not accessible
-	if(!handleError("errStorageAccess")) return;
-
-	readItems(items);
-	status('');
-
-	if(settings.hasSync === undefined || (settings.useSync && context === "[BKGND]")) {
-	    // Check if the sync storage is supported and read its settings
-	    if(chrome.storage.sync) {
-		chrome.storage.sync.get(null, function(syncItems) {
-		    // If the query fails, we know that sync is not supported
-		    if(chrome.runtime.lastError) {
-			settings.hasSync = false;
-			saveSettings();
-			return;
-		    }
-		    readItems(syncItems);
-		    settings.hasSync = true;
-		    saveSettings();
-		});
-		return;
-	    } else {
-		settings.hasSync = false;
-		saveSettings();
-	    }
-	}
-    });
-};
-
-// Reads the items returned when getting the storage
-// This also converts the data from previous MMM versions to the current format
-function readItems(items) {
-    if(!items) return;
-
-    // Read settings, if stored
-    if(items.settings && !settings.hasSync) {
-	settings = items.settings;
-    }
-
-    var key;
-    for(key in items) {
-	if(key.indexOf("list_") === 0) {
-	    // Plausibility check
-	    let list = items[key];
-	    let id = list.id;
-	    if("list_" + list.id !== key)
-		continue;
-	    if(listHasError(list))
-		continue;
-
-	    // If this is a new list or the credentials have changed, load it!
-	    let index = lists.findIndex((list) => list.id === id);
-	    if(index === -1 || list.changedAt > lists[index].changedAt) {
-		updateList(list);
-	    }
-	}
-    }
-    if(lists.length === 0 && Array.isArray(items.lists) && items.lists.length > 0) {
-	items.lists.forEach((list) => listHasError(list) || updateCredential(list));
-	// If the user has used a previous version with syncing not optional, assume
-	// that the user wants to continue using that behaviour unless he explicitly
-	// disables it
-	settings.useSync = true;
-    }
-    updateIcon();
-}
+// Functions to export to the outside
+var loadAll;
+var readItems;
 
 var saveSettings;
 var saveList;
-var saveAll;
 var updateCredential;
 var deleteCredentialWithId;
 
@@ -104,42 +37,67 @@ var deleteCredentialWithId;
     // PRIVATE SECTION
     //
     var ownChanges = [];
+    var syncedAt = 0;
 
-    var set = function(storage, object, handler) {
+    // handles the result of adding/removing elements in the sync storage
+    function handleSyncResult() {
+	if(!chrome.runtime.lastError) {
+	    syncedAt = new Date().getTime();
+	    var sao = { syncedAt };
+	    setLocal(sao);
+	}
+    }
+
+    // Adds storage values to a single storage area
+    // NOTE: We add an entry in the ownChanges array, so
+    // we can filter out the related storageChange event
+    function set(storage, object, handler) {
 	for(name in object) {
 	    ownChanges.push({name, value: object[name]});
 	}
 	storage.set(object, handler);
-    };
+    }
 
-    var remove = function(storage, name, handler) {
+    // Removes a single key from a single storage area
+    // NOTE: We add an entry in the ownChanges array, so
+    // we can filter out the related storageChange event
+    function remove(storage, name, handler) {
 	ownChanges.push({name, value: undefined});
 	storage.remove(name, handler);
-    };
+    }
 
-    var setLocal = function(object) {
+    // Sets storage values only in the local storage
+    function setLocal(object) {
 	set(chrome.storage.local, object, handleError);
-    };
+    }
 
-    var setAll = function(object) {
+    // Sets storage values in all storage areas
+    function setAll(object) {
 	setLocal(object);
 	if(settings.hasSync && settings.useSync)
-	    set(chrome.storage.sync, object, suppressError);
-    };
+	    set(chrome.storage.sync, object, handleSyncResult);
+    }
 
-    var removeAll = function(name) {
+    // Removes a single storage key from all storage areas
+    function removeAll(name) {
 	remove(chrome.storage.local, name, handleError);
 	if(settings.hasSync && settings.useSync)
-	    remove(chrome.storage.sync, name, suppressError);
-    };
+	    remove(chrome.storage.sync, name, handleSyncResult);
+    }
 
-    var deleteListLocally = function(id) {
+    // Deletes a list from the lists array and removes it from the UI
+    function deleteListLocally(id) {
 	lists = lists.filter((list) => list.id !== id);
 	if(typeof unrenderListById === 'function') unrenderListById(id);
-    };
+    }
 
+    // Extra section for handling storage updates, the functions inside
+    // do not need to be exposed to anything else
     (function(){
-	var isOwnChange = function(name, change) {
+	// Determine if a storage change has previously been recorded to
+	// the ownChanges array -> then it does not need to be processed
+	// again in this frame
+	function isOwnChange(name, change) {
 	    var keys = change.newValue ? Object.keys(change.newValue).sort() : [];
 	    var i;
 	    ocloop: for(i = 0; i < ownChanges.length; i++) {
@@ -172,10 +130,10 @@ var deleteCredentialWithId;
 		return true;
 	    }
 	    return false;
-	};
+	}
 
 	// React to storage change events
-	var handleStorageChanges = function(changes, area) {
+	function handleStorageChanges(changes, area) {
 	    var key;
 	    if(area == 'sync' && settings.useSync && context === "[BKGND]") {
 		for(key in changes) {
@@ -206,6 +164,16 @@ var deleteCredentialWithId;
 			continue;
 		    console.log(context, area + " '" + key + "' changed:", change);
 
+		    if(key === 'settings' && change.newValue) {
+			// Update settings
+			settings = change.newValue;
+		    }
+
+		    if(key === 'syncedAt' && change.newValue) {
+			// Update last sync time
+			syncedAt = change.newValue;
+		    }
+
 		    if(key.indexOf('list_') === 0) {
 			// Update a list that has been changed by another local script
 			if( change.newValue && key == 'list_' + change.newValue.id)
@@ -216,19 +184,110 @@ var deleteCredentialWithId;
 		    }
 		}
 	    }
-	};
-	// Listen to storage changes
+	}
+	// Start storage event listener
 	chrome.storage.onChanged.addListener(handleStorageChanges);
     })();
 
     //
     // PUBLIC SECTION
     //
+
+    // Load all lists from the addon storage and execute function then when done
+    loadAll = function() {
+	chrome.storage.local.get(null, function loadAll__localGet(items){
+	    // We cannot proceed when the local storage is not accessible
+	    if(!handleError("errStorageAccess")) return;
+
+	    readItems(items, 'local');
+	    status('');
+
+	    if(settings.hasSync === undefined || (settings.useSync && context === "[BKGND]")) {
+		// Check if the sync storage is supported and read its settings
+		if(chrome.storage.sync) {
+		    chrome.storage.sync.get(null, function loadAll__syncGet(syncItems) {
+			// If the query fails, we know that sync is not supported
+			if(chrome.runtime.lastError) {
+			    settings.hasSync = false;
+			    saveSettings();
+			    return;
+			}
+			// Remove all lists that have been removed remotely
+			lists.filter(function(list) {
+			    var key = "list_" + list.id;
+			    return (key in syncItems) || (list.changedAt > syncedAt);
+			});
+			// Update lists that have been changed remotely
+			readItems(syncItems, 'sync');
+			settings.hasSync = true;
+			saveSettings();
+		    });
+		    return;
+		} else {
+		    settings.hasSync = false;
+		    saveSettings();
+		}
+	    }
+	});
+    };
+
+    // Reads the items returned when getting the storage
+    // This also converts the data from previous MMM versions to the current format
+    // - area: The storage area this is loaded from (either 'local' or 'sync')
+    readItems = function(items, area) {
+	if(!items) return;
+
+	// Read settings, if stored
+	if(items.settings && !settings.hasSync) {
+	    settings = items.settings;
+	}
+
+	var update;
+	if(area == 'local') {
+	    // Read last sync time from local storage or ...
+	    syncedAt = items.syncedAt ? items.syncedAt : 0;
+	    update = updateList;
+	} else {
+	    // Update last sync time
+	    handleSyncResult();
+	    update = saveList;
+	}
+
+	var key;
+	for(key in items) {
+	    if(key.indexOf("list_") === 0) {
+		// Plausibility check
+		let list = items[key];
+		let id = list.id;
+		if("list_" + list.id !== key)
+		    continue;
+		if(listHasError(list))
+		    continue;
+
+		// If this is a new list or the credentials have changed, load it!
+		let index = lists.findIndex((list) => list.id === id);
+		if(index === -1 || list.changedAt > lists[index].changedAt) {
+		    update(list);
+		}
+	    }
+	}
+	if(lists.length === 0 && Array.isArray(items.lists) && items.lists.length > 0) {
+	    items.lists.forEach((list) => listHasError(list) || updateCredential(list));
+	    // If the user has used a previous version with syncing not optional, assume
+	    // that the user wants to continue using that behaviour unless he explicitly
+	    // disables it
+	    settings.useSync = true;
+	}
+	updateIcon();
+    };
+
+    // Saves an updated settings object to storage
     saveSettings = function() {
 	var obj = { settings };
 	setAll(obj);
     };
 
+    // Saves a single list to local storage
     saveList = function(list) {
 	if(updateList(list) === -1) return;
 	var key = "list_" + list.id;
@@ -238,17 +297,7 @@ var deleteCredentialWithId;
 	updateIcon();
     };
 
-    saveAll = function() {
-	// Sync to persistent storage and background task
-	var listObj = {};
-	lists.forEach(function(list) {
-	    var key = "list_" + list.id;
-	    listObj[key] = list;
-	});
-	setLocal(listObj);
-	updateIcon();
-    };
-
+    // Saves updated list credentials to local and cloud storage
     updateCredential = function(list) {
 	list = {
 	    id:        list.id,
@@ -261,6 +310,7 @@ var deleteCredentialWithId;
 	saveList(list);
     };
 
+    // Deletes list credentials from local and cloud storage
     deleteCredentialWithId = function(id) {
 	var key = "list_" + id;
 	console.log(context, "Removing '" + key + "'");

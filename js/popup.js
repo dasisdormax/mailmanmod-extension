@@ -136,7 +136,7 @@ function renderList(list, index) {
     var label = div + ">label";
     if(!$(div).length) {
 	let html = '<div id="d-' + id + '">';
-	if(lists[index+1]) {
+	if(index && lists[index+1]) {
 	    $("div#d-" + lists[index+1].id).before(html);
 	} else {
 	    $("#mmm-lists").append(html);
@@ -158,18 +158,20 @@ function renderList(list, index) {
 	    $(label).append(' <span class="error">' + __(list.error) || __("listErrUnknown") + '</span>');
 	} else if(list.mails && list.mails.length > 0) {
 	    list.mails.forEach(function(mail) {
-		let mdiv     = '#m-' + mail.msgid;
+		let msgid    = mail.msgid;
+		let mdivid   = 'm-' + id + '-' + msgid;
+		let mdiv     = '#' + mdivid;
 		let p        = mdiv + ">p";
 		let clearfix = mdiv + ">.clearfix";
 		// Create child div for each e-mail
-		$(div).append('<div class="mail" id="m-' + mail.msgid + '">');
-		$(mdiv).attr('data-msgid', mail.msgid);
+		$(div).append('<div class="mail" id="' + mdivid + '">');
+		$(mdiv).attr('data-msgid', msgid);
 		$(mdiv).attr('data-listid', id);
 		$(mdiv).append('<p>');
 		$(p).append('<strong>');
 		$(p + ">strong").text(mail.subject);
 		$(p).append('<br>');
-		$(p).append(__("mailFrom", mail.from));
+		$(p).append(__("mailFrom", [mail.from]));
 		$(mdiv).append('<div class="clearfix">');
 		$(clearfix).append('<button class="hw green" data-accept>' + __('buttonAccept')  + "</button>");
 		$(clearfix).append('<button class="hw grey" data-details>' + __('buttonDetails') + "</button>");
@@ -193,13 +195,13 @@ function renderMailDetails(list, details) {
     $("#summary").append('<strong>');
     $("#summary > strong").text(details.subject);
     $("#summary").append('<br>');
-    $("#summary").append(__('mailFrom', details.from));
+    $("#summary").append(__('mailFrom', [details.from]));
     if(details.size) {
 	$("#mail").removeClass('hidden');
 	$("#summary").append('<br>');
-	$("#summary").append(__('mailSize', details.size));
+	$("#summary").append(__('mailSize', [details.size]));
 	$("#summary").append('<br>');
-	$("#summary").append(__('mailTime', details.time));
+	$("#summary").append(__('mailTime', [details.time]));
 	$("#headers").text(details.headers);
 	var text = details.text;
 	text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements

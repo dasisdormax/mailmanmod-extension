@@ -45,9 +45,10 @@ function doImport() {
 		list.name     = item.name;
 		list.baseurl  = item.baseurl + (item.compatible ? "/admindb" : '');
 		list.password = item.password;
+		delete list.exists;
 		updateCredential(list);
 	    }
-	    status(_("statusImportSuccessful", i));
+	    status(_("statusImportSuccessful", [i]));
 	} catch(ex) {
 	    status(_("errImportParseError"));
 	}
