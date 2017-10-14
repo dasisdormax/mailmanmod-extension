@@ -41,7 +41,9 @@ function renderList(list) {
 function bgRefreshAll() {
     scheduleNextRefresh();
     // the sorting makes sure that the oldest lists are updated first
-    var sorted = lists.sort((a, b) => a.time > b.time ? 1 : -1);
+    // NOTE: As sort modifies the array it is called on, we have to work on a copy,
+    // such as one created by slice() or filter()
+    var sorted = lists.filter((list) => list.exists !== false).sort((a, b) => a.time > b.time ? 1 : -1);
     var time = new Date().getTime();
     for(let i = 0; i < sorted.length; i++) {
 	let list = sorted[i];
@@ -55,13 +57,16 @@ function bgRefreshAll() {
     }
 }
 
-var timeout;
-function scheduleNextRefresh() {
-    if(timeout !== undefined)
-	clearTimeout(timeout);
-    // Refresh once every minute
-    timeout = setTimeout(bgRefreshAll, 60000);
-}
+var scheduleNextRefresh;
+(function(){
+    var timeout;
+    scheduleNextRefresh = function() {
+	if(timeout !== undefined)
+	    clearTimeout(timeout);
+	// Refresh once every minute
+	timeout = setTimeout(bgRefreshAll, 60000);
+    };
+})();
 
 /******************
  * INITIALIZATION *

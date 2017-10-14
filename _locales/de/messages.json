@@ -11,9 +11,13 @@
 	"message": "Mailinglisten",
 	"description": "The heading for the mailing lists panel"
     },
+    "headingNew": {
+	"message": "Neue Liste erstellen",
+	"description": "The heading for the editing panel when creating a new list"
+    },
     "headingEdit": {
-	"message": "Liste bearbeiten",
-	"description": "The heading for the editing panel"
+	"message": "Liste '$1' bearbeiten",
+	"description": "The heading for the editing panel when editing an existing list"
     },
     "headingDetails": {
 	"message": "Detailansicht für #$MSGID$ in $LISTNAME$",
@@ -30,7 +34,7 @@
 	}
     },
     "listLabelName": {
-	"message": "Name der Liste",
+	"message": "Name der Liste [?]",
 	"description": "The label for the name field in the edit list form"
     },
     "listLabelBaseurl": {
@@ -40,6 +44,10 @@
     "listLabelPassword": {
 	"message": "Moderationspasswort",
 	"description": "The label for the password field in the edit list form"
+    },
+    "listHelpName": {
+	"message": "Der Name der Mailingliste, muss eindeutig sein. Mehrere gleichnamige Listen auf unterschiedlichen Servern können als 'liste@domain1.com', 'liste@domain2.net', etc. eingetragen werden.",
+	"description": "A help message for the name field in the edit list form"
     },
     "listHelpBaseurl": {
 	"message": "Die URL zum Moderations-Interface, ohne den Listennamen",
@@ -194,8 +202,12 @@
 	"description": "The error displayed when trying to save a list with an empty moderation password"
     },
     "errStorageAccess": {
-	"message": "Fehler beim Zugriff auf den Addon-Speicher: $1",
+	"message": "Fehler beim Zugriff auf den Addon-Speicher: '$1'",
 	"description": "The error displayed when a storage access failed"
+    },
+    "errSyncNotAvailable": {
+	"message": "Fehler beim Zugriff auf den Synchronisierungs-Speicher: '$1' — Prüfe, ob du mit dem Internet verbunden ist und ob du die aktuellste Browser-Version installiert hast.",
+	"description": "The error displayed when enabling the sync storage failed."
     },
     "errImportFiletype": {
 	"message": "Ungültiger Dateityp! Es können nur JSON-Dateien verarbeitet werden.",

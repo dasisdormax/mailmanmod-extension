@@ -103,6 +103,18 @@ function toggleUseSync(event) {
     if(checked == settings.useSync) return;
     settings.useSync = checked;
     saveSettings();
+    // Note: saveSettings will set useSync to false if sync is not available
+    if(settings.useSync) {
+	chrome.storage.sync.get(null, function __toggleUseSync__getSync(items) {
+	    readItems(items, 'sync');
+	    // The lists to update => those in the local lists array that do not have a corresponding list in sync storage
+	    var upload = lists.filter((list) => Object.keys(items).every((key) => items[key].name !== list.name));
+	    upload.forEach(function __toggleUseSync__uploadNewList(list){
+		updateCredential(list, true);
+	    });
+	});
+    }
+    $("#useSync")[0].checked = settings.useSync;
 }
 
 function openFileChooser() {

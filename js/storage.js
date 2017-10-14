@@ -142,17 +142,15 @@ var deleteCredentialWithId;
 			continue;
 		    console.log(context, area + " '" + key + "' changed:", change);
 
-		    if(key === 'settings' && change.newValue) {
-			// Update settings
-			settings = change.newValue;
-		    }
-
-		    else if(key.indexOf('list_') === 0) {
+		    if(key.indexOf('list_') === 0) {
 			// Update a list
-			if( change.newValue && key == 'list_' + change.newValue.id)
-			    saveList(change.newValue);
-			if(!change.newValue && key == 'list_' + change.oldValue.id)
+			if( change.newValue && key == 'list_' + change.newValue.id) {
+			    // wait for a local change of the same list to be processed first
+			    setTimeout(() => saveList(change.newValue), 2000);
+			}
+			if(!change.newValue && key == 'list_' + change.oldValue.id) {
 			    deleteCredentialWithId(change.oldValue.id);
+			}
 			updateIcon();
 		    }
 		}
@@ -195,7 +193,7 @@ var deleteCredentialWithId;
 
     // Load all lists from the addon storage and execute function then when done
     loadAll = function() {
-	chrome.storage.local.get(null, function loadAll__localGet(items){
+	chrome.storage.local.get(null, function __loadAll__getLocal(items){
 	    // We cannot proceed when the local storage is not accessible
 	    if(!handleError("errStorageAccess")) return;
 
@@ -205,17 +203,20 @@ var deleteCredentialWithId;
 	    if(settings.hasSync === undefined || (settings.useSync && context === "[BKGND]")) {
 		// Check if the sync storage is supported and read its settings
 		if(chrome.storage.sync) {
-		    chrome.storage.sync.get(null, function loadAll__syncGet(syncItems) {
-			// If the query fails, we know that sync is not supported
+		    chrome.storage.sync.get(null, function __loadAll__getSync(syncItems) {
 			if(chrome.runtime.lastError) {
-			    settings.hasSync = false;
-			    saveSettings();
+			    // An error may mean a temporary network outage or that
+			    // sync is in general not available
+			    if(settings.hasSync === undefined) {
+				settings.hasSync = false;
+				saveSettings();
+			    }
 			    return;
 			}
 			// Remove all lists that have been removed remotely
-			lists.filter(function(list) {
+			lists = lists.filter(function(list) {
 			    var key = "list_" + list.id;
-			    return (key in syncItems) || (list.changedAt > syncedAt);
+			    return (key in syncItems) || !list.changedAt || (list.changedAt > syncedAt);
 			});
 			// Update lists that have been changed remotely
 			readItems(syncItems, 'sync');
@@ -285,29 +286,64 @@ var deleteCredentialWithId;
     saveSettings = function() {
 	var obj = { settings };
 	setAll(obj);
+	if(!settings.useSync || !settings.hasSync) {
+	    // Update the synchronized settings object, so new installations
+	    // use the most recent settings object. Otherwise, new installations
+	    // would always use `settings.useSync = true` as the disabled state
+	    // would never be written to sync.
+	    //
+	    // Also, we re-check if the sync functionality exists at all, as the
+	    // user may update their browser and want to enable sync at a later time
+	    chrome.storage.sync.get("settings", function __saveSettings__getSync(items) {
+		if(chrome.runtime.lastError) {
+		    if(settings.useSync) {
+			settings.useSync = false;
+			status(_("errSyncNotAvailable", [chrome.runtime.lastError.message]));
+		    }
+		} else {
+		    settings.hasSync = true;
+		    // Update and save the settings object
+		    var obj = { settings };
+		    setLocal(obj);
+		    if(items.settings) {
+			set(chrome.storage.sync, obj, suppressError);
+		    }
+		}
+	    });
+	}
     };
 
     // Saves a single list to local storage
     saveList = function(list) {
-	if(updateList(list) === -1) return;
+	if(!updateList(list)) return false;
 	var key = "list_" + list.id;
 	var obj = {};
 	obj[key] = list;
 	setLocal(obj);
 	updateIcon();
+	return true;
     };
 
     // Saves updated list credentials to local and cloud storage
-    updateCredential = function(list) {
+    updateCredential = function(list, sync) {
 	list = {
 	    id:        list.id,
 	    name:      list.name,
 	    baseurl:   list.baseurl,
-	    password:  list.password,
-	    exists:    list.exists,
-	    changedAt: new Date().getTime()
+	    password:  list.password
 	};
-	saveList(list);
+	// Setting the sync flag allows to skip setting the value locally again
+	if(!sync) {
+	    list.changedAt = new Date().getTime();
+	    sync = saveList(list);
+	}
+	if(sync && settings.hasSync && settings.useSync) {
+	    console.log(context, "Uploading list '" + list.name + "' to sync storage ...");
+	    var key = "list_" + list.id;
+	    var obj = {};
+	    obj[key] = list;
+	    set(chrome.storage.sync, obj, handleSyncResult);
+	}
     };
 
     // Deletes list credentials from local and cloud storage

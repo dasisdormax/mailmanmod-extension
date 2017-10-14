@@ -11,9 +11,13 @@
 	"message": "Mailing lists",
 	"description": "The heading for the mailing lists panel"
     },
+    "headingNew": {
+	"message": "Create new list",
+	"description": "The heading for the editing panel when creating a new list"
+    },
     "headingEdit": {
-	"message": "Add / Edit List",
-	"description": "The heading for the editing panel"
+	"message": "Edit list '$1'",
+	"description": "The heading for the editing panel when editing an existing list"
     },
     "headingDetails": {
 	"message": "Details for #$MSGID$ in $LISTNAME$",
@@ -30,7 +34,7 @@
 	}
     },
     "listLabelName": {
-	"message": "List Name",
+	"message": "List Name [?]",
 	"description": "The label for the name field in the edit list form"
     },
     "listLabelBaseurl": {
@@ -40,6 +44,10 @@
     "listLabelPassword": {
 	"message": "Moderation Password",
 	"description": "The label for the password field in the edit list form"
+    },
+    "listHelpName": {
+	"message": "The list name, must be unique. Multiple same-name lists on different servers can be entered as 'list@domain1.com', 'list@domain2.net', etc.",
+	"description": "A help message for the name field in the edit list form"
     },
     "listHelpBaseurl": {
 	"message": "The URL to the moderation interface, excluding the list name itself",
@@ -194,8 +202,12 @@
 	"description": "The error displayed when trying to save a list with an empty moderation password"
     },
     "errStorageAccess": {
-	"message": "Error accessing addon storage: $1",
+	"message": "Error accessing addon storage: '$1'",
 	"description": "The error displayed when a storage access failed"
+    },
+    "errSyncNotAvailable": {
+	"message": "Error accessing sync storage: '$1' — Check if you are connected to the internet and using the most recent version of your browser.",
+	"description": "The error displayed when enabling the sync storage failed."
     },
     "errImportFiletype": {
 	"message": "Invalid filetype! Only JSON files are allowed.",

@@ -51,10 +51,9 @@ function getListById(id) {
 // - Returns the index of the inserted or updated element, or -1
 // NOTE that if a different list with an already existing name is provided,
 // the newer list is kept and the older one is deleted
-function updateList(list) {
+function updateList(list, isRename) {
     var nameAt = lists.findIndex((other) => other.name >= list.name);
     var idAt   = lists.findIndex((other) => other.id   == list.id);
-    var index  = -1;
     if(nameAt >= 0 && lists[nameAt].name == list.name && idAt !== nameAt) {
 	// The new list has the same name, but a different ID
 	console.log(context, "Merging two lists with the same name '" + list.name + "'");
@@ -62,26 +61,44 @@ function updateList(list) {
 	if(list.changedAt > lists[nameAt].changedAt) {
 	    list.id = lists[nameAt].id;
 	    lists[nameAt] = list;
-	    updateCredential(list);
+	} else {
+	    list = lists[nameAt];
 	}
 	deleteCredentialWithId(delId);
+	updateCredential(list);
+	return false;
     } else if(idAt >= 0) {
 	// The new list is an update to a previous list
-	index = idAt;
+	if(list.exists === undefined && lists[idAt].changedAt && lists[idAt].changedAt >= list.changedAt)
+	{
+	    // This test should prevent a list from being refreshed twice when a list is
+	    // updated in both the local and sync storage areas
+	    return false;
+	}
+	if(nameAt === idAt + 1 || (nameAt === -1 && idAt === lists.length - 1)) {
+	    // If the name has changed but the list does not need to be moved, we're fine
+	    nameAt = idAt;
+	}
+	if(idAt !== nameAt) {
+	    // The list has been renamed and we have to update its position
+	    // => we remove the list from the lists array and insert it back in the correct position
+	    console.log(context, "Moving list '" + list.name + "' after the rename ...");
+	    lists.splice(idAt, 1);
+	    return updateList(list, true);
+	}
 	lists[idAt] = list;
     } else if(nameAt >= 0) {
 	// This is a new list that is inserted somewhere in the middle
-	index = nameAt;
-	lists.splice(index, 0, list);
+	lists.splice(nameAt, 0, list);
     } else {
 	// This is a new list that is added to the end
-	index = lists.length;
+	nameAt = lists.length;
 	lists.push(list);
     }
 
     // Render the updated list and pass the index as hint to where to place it
-    if(typeof renderList === 'function' && index >= 0) renderList(list, index);
-    return index;
+    if(typeof renderList === 'function') renderList(list, nameAt, isRename);
+    return true;
 };
 
 function listUrl(list) {

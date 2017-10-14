@@ -24,6 +24,7 @@
 function actionNew(id) {
     var first   = lists.length > 0 ? lists[0] : null;
     var current = id ? getListById(id) : null;
+    $("#edit>h3>span").text(_("headingNew"));
     showEditForm(copyList(current || first));
 }
 
@@ -32,7 +33,9 @@ function actionEdit(id) {
 	status(_("errNoListSelected"));
 	return;
     }
-    showEditForm(getListById(id));
+    var list = getListById(id);
+    $("#edit>h3>span").text(_("headingEdit", [list.name]));
+    showEditForm(list);
 }
 
 function actionDelete(id) {
@@ -51,8 +54,8 @@ function actionRefresh() {
 	list.time   = null;
 	if(!list.exists)
 	    list.exists = undefined;
+	renderList(list);
     });
-    renderAll();
 }
 
 // Execute an action on the selected mailinglist
@@ -130,16 +133,17 @@ function optionsClick() {
 /*************
  * RENDERING *
  *************/
-function renderList(list, index) {
+function renderList(list, index, isRename) {
     var id    = list.id;
     var div   = "div#d-" + id;
     var label = div + ">label";
-    if(!$(div).length) {
+    if(isRename || !$(div).length) {
 	let html = '<div id="d-' + id + '">';
+	let elem = $(div).length ? $(div) : $(html);
 	if(index && lists[index+1]) {
-	    $("div#d-" + lists[index+1].id).before(html);
+	    $("div#d-" + lists[index+1].id).before(elem);
 	} else {
-	    $("#mmm-lists").append(html);
+	    $("#mmm-lists").append(elem);
 	}
     }
     // reset div contents and attributes
@@ -228,23 +232,30 @@ function status(text) {
 }
 
 // Select the page to show: all others will be hidden
-function select(selection) {
-    $("body > div").addClass("hidden");
-    $(selection).removeClass("hidden");
-    status("");
-}
-
-function renderAll() {
-    $("#mmm-lists").empty();
-    for(var i = 0; i < lists.length; i++) {
-	renderList(lists[i]);
-    }
-}
-
-function showLists() {
-    select("#main");
-    renderAll();
-}
+var select;
+(function(){
+    var savedPos = 0;
+    var prev = "#main";
+    select = function(sel) {
+	var currPos = scrollY;
+	// Hide and unhide the respective panels
+	$(prev).addClass("hidden");
+	$(sel).removeClass("hidden");
+	// Scroll the page
+	if($(sel)[0].id === "main") {
+	    scrollTo(0, savedPos);
+	} else {
+	    if($(prev)[0].id === "main") {
+		savedPos = currPos;
+	    }
+	    scrollTo(0, 0);
+	}
+	// Save the selector for later
+	prev = sel;
+	// Remove any status texts
+	status("");
+    };
+})();
 
 function showEditForm(list) {
     select("#edit");
