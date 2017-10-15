@@ -1,8 +1,7 @@
 # Mailman Moderation (WebExtension)
 Manage and moderate all your mailman lists in one place
 
-<a href=”https://addons.mozilla.org/firefox/addon/mailmanmod”><img border=”0″ src=”https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png” width=”172″ height=”60″></a>
-
+[![Download from addons.mozilla.org](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/firefox/addon/mailmanmod)
 
 ## WARNING
 This extension was created and tested only with one server (GNU Mailman v2.1.23, german language)
@@ -45,6 +44,6 @@ Note that you may have to repeat these steps each time you restart your browser.
 
 
 ## License, attributions
-This extension is licensed under the <a href="agpl.txt">GNU Affero General Public License</a>, version 3 or above
+This extension is licensed under the [GNU Affero General Public License](agpl.txt), version 3 or above
 
-The new icon shamelessly uses the original <a href="https://www.gnu.org/software/mailman/images/logo2010.svg">GNU Mailman logo</a> by Andrija Arsic and glyphs from <a href="http://fontawesome.io">Font Awesome</a> by Dave Gandy.
+The new icon shamelessly uses the original [GNU Mailman logo](https://www.gnu.org/software/mailman/images/logo2010.svg) by Andrija Arsic and glyphs from [Font Awesome](http://fontawesome.io) by Dave Gandy.
