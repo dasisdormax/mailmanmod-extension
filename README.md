@@ -44,6 +44,6 @@ Note that you may have to repeat these steps each time you restart your browser.
 
 
 ## License, attributions
-This extension is licensed under the [GNU Affero General Public License](agpl.txt), version 3 or above
+This extension is licensed under the [GNU Affero General Public License](agpl-3.0.txt), version 3 or above
 
 The new icon shamelessly uses the original [GNU Mailman logo](https://www.gnu.org/software/mailman/images/logo2010.svg) by Andrija Arsic and glyphs from [Font Awesome](http://fontawesome.io) by Dave Gandy.
