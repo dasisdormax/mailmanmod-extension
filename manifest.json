@@ -15,13 +15,13 @@
     },
 
     "icons": {
-	"96": "icons/mmm-96.png",
-	"192": "icons/mmm-192.png"
+	"64": "icons/mmm-64.png",
+	"128": "icons/mmm-128.png"
     },
     
     "browser_action": {
 	"browser_style": false,
-	"default_icon": "icons/mmm-96.png",
+	"default_icon": "icons/mmm-64.png",
 	"default_title": "__MSG_extensionName__",
 	"default_popup": "html/popup.html"
     },

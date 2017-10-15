@@ -34,8 +34,8 @@ FILES=(
     js/background.js
     js/options.js
     js/popup.js
-    icons/mmm-192.png
-    icons/mmm-96.png
+    icons/mmm-128.png
+    icons/mmm-64.png
     extern/downloadjs/download.js
     extern/downloadjs/LICENSE.md
     extern/jquery/jquery-3.2.1.min.js

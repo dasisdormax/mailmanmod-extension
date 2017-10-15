@@ -1,12 +1,11 @@
 # Mailman Moderation (WebExtension)
 Manage and moderate all your mailman lists in one place
-- **Firefox:** Download from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mailmanmod)
 
-<img title="Main panel example" src="example.png" width="450px">
+<a href=”https://addons.mozilla.org/firefox/addon/mailmanmod”><img border=”0″ src=”https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png” width=”172″ height=”60″></a>
 
 
 ## WARNING
-This extension was created and tested only with one server (mailman v2.1.23, german language)
+This extension was created and tested only with one server (GNU Mailman v2.1.23, german language)
 and may not work on your server correctly. Please test the functionality with a test e-mail
 before using this add-on in production to prevent data loss.
 
@@ -27,7 +26,7 @@ with a test installation, i'll try my best to update this extension for it.
 
 
 ## Manual Installation
-Note that you will have to repeat these steps each time you restart your browser. However, your browser should keep your storage across versions (only tested with FF). Export your settings regularly :)
+Note that you may have to repeat these steps each time you restart your browser. However, your browser should keep your storage across versions (only tested with FF). Export your settings regularly :)
 
 ### Firefox (current / ESR 52)
 - Clone this repository
@@ -39,3 +38,13 @@ Note that you will have to repeat these steps each time you restart your browser
 - Open the Chrome menu and go to 'More Tools > Extensions'
 - Enable Developer Mode and click 'Load unpacked extension'
 - Select the folder you cloned this repository to
+
+
+## Example screenshot
+<img title="Main panel example" src="example.png" width="450px">
+
+
+## License, attributions
+This extension is licensed under the <a href="agpl.txt">GNU Affero General Public License</a>, version 3 or above
+
+The new icon shamelessly uses the original <a href="https://www.gnu.org/software/mailman/images/logo2010.svg">GNU Mailman logo</a> by Andrija Arsic and glyphs from <a href="http://fontawesome.io">Font Awesome</a> by Dave Gandy.
