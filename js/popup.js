@@ -140,7 +140,7 @@ function renderList(list, index, isRename) {
     if(isRename || !$(div).length) {
 	let html = '<div id="d-' + id + '">';
 	let elem = $(div).length ? $(div) : $(html);
-	if(index && lists[index+1]) {
+	if(index >= 0 && lists[index+1]) {
 	    $("div#d-" + lists[index+1].id).before(elem);
 	} else {
 	    $("#mmm-lists").append(elem);
