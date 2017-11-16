@@ -77,6 +77,10 @@
 	"message": "UNGÜLTIGES PASSWORT",
 	"description": "The message displayed when the given password is invalid"
     },
+    "actionSelect": {
+	"message": "Aktion auswählen ...",
+	"description": "The text displayed when no action has been selected"
+    },
     "actionRefreshAll": {
 	"message": "Alles aktualisieren",
 	"description": "The text for the refresh all action option"
@@ -93,8 +97,8 @@
 	"message": "Liste löschen",
 	"description": "The text for the delete selected list action option"
     },
-    "buttonPerformAction": {
-	"message": "Aktion ausführen",
+    "buttonActionGo": {
+	"message": "Los!",
 	"description": "The caption for the perform action button"
     },
     "buttonOptions": {

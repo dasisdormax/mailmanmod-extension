@@ -3,50 +3,71 @@
 }
 html {
     overflow-x: hidden;
-    background-color: hsl(0,0%,98%);
+    overflow-y: scroll;
+    background-color: hsl(0,0%,92%);
 }
 body {
     margin: 0px;
     font-family: sans-serif;
     font-size: 16px;
-    color: black;
     width: 570px;
     max-width: 100%;
 }
 .roundrect {
-    margin: 16px 7px 7px;
-    border: solid 1px hsl(0,0%,70%);
-    border-radius: 9px;
+    margin: 5px;
+    border: solid 1px hsl(0,0%,55%);
+    background-color: hsl(0,0%,98%);
+    border-radius: 10px;
+}
+.roundrect hr {
+    border-color:hsl(0,0%,55%);
+    border-style:solid none none;
+    margin:0px;
+    border-width:1px;
 }
 .roundrect > button:last-child {
-    border-bottom-left-radius: 7px;
-    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 .roundrect h3 {
-    position: relative;
+    padding: 7px;
+    margin: 0px;
     font-size: 20px;
     text-align: center;
-    transform: translateY(-13px);
-    margin: 0px auto;
+    color: black;
 }
-.roundrect h3 span {
-    color: hsl(0,0%,20%);
-    background-color: hsl(0,0%,98%);
-    padding: 0px 8px;
+.roundrect .content {
+    margin: 10px;
+    padding: 0px;
 }
-button {
+button, select {
     cursor: pointer;
     border: none;
     padding: 5px;
     transition:background-color .2s linear;
+    -moz-appearance: none;
+    -webkit-appearance: none;
 }
 form {
     margin: 8px;
 }
 label {
     margin: 6px 0 2px;
+    color: black;
     display: block;
 }
+option {
+    background-color:hsl(0,0%,95%);
+}
+input[type="radio"] {
+    margin: 0 4px 0 1px;
+    transform: translateY(1px);
+}
+#mmm-options:not(:hover) {
+    background-color:transparent;
+}
+
+/* STATUS BOX */
 #status {
     position: fixed;
     top: 40px;
@@ -63,10 +84,6 @@ label {
 }
 
 /* LIST OVERVIEW */
-#mmm-lists {
-    margin-top: -12px;
-    padding: 8px;
-}
 label > span {
     font-size: 11px;
     color: hsl(0,0%,50%);
@@ -75,21 +92,34 @@ label > span.error {
     color: hsl(0,100%,60%);
 }
 .mail {
-    margin: 10px 15px;
+    margin: 10px;
     border: solid 1px black;
 }
 .mail p, #details p {
     font-size: 13.5px;
     padding: 10px;
     margin: 0px;
+    color: black;
+}
+.roundrect hr + h3 {
+    margin: 15px 0 5px;
+}
+
+/* LIST ACTIONS */
+.roundrect > .actiongroup:last-child > :first-child {
+    float:left;
+    width: 80%;
+    height: 30px;
+    border-bottom-left-radius: 8px;
+}
+.roundrect > .actiongroup:last-child > :last-child {
+    float:left;
+    height: 30px;
+    width: 20%;
+    border-bottom-right-radius: 8px;
 }
 
 /* MAIL DETAILS */
-#details h4 {
-    color: hsl(0,0%,25%);
-    font-size: 20px;
-    text-align: center;
-}
 #headers, #fulltext {
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -113,32 +143,37 @@ label > span.error {
 
 /* COLORS */
 .grey {
-    background-color: hsla(0,0%,70%,.3);
+    background-color: hsl(0,0%,85%);
+    color: black;
 }
 .grey:hover {
-    background-color: hsla(0,0%,70%,1);
+    background-color: hsl(0,0%,70%);
 }
 .yellow {
-    background-color: hsla(60,100%,50%,.25);
+    background-color: hsl(60,100%,80%);
+    color: black;
 }
 .yellow:hover {
-    background-color: hsla(60,100%,50%,1);
+    background-color: hsl(60,100%,45%);
 }
 .green {
-    background-color: hsla(120,100%,50%,.25);
+    background-color: hsl(120,100%,80%);
+    color: black;
 }
 .green:hover {
-    background-color: hsla(120,100%,50%,1);
+    background-color: hsl(120,100%,45%);
 }
 .blue {
-    background-color: hsla(225,100%,80%,.5);
+    background-color: hsl(225,100%,85%);
+    color: black;
 }
 .blue:hover {
-    background-color: hsla(225,100%,80%,1);
+    background-color: hsl(225,100%,72%);
 }
 .red {
-    background-color: hsla(0,100%,75%,.5);
+    background-color: hsl(0,100%,85%);
+    color: black;
 }
 .red:hover {
-    background-color: hsla(0,100%,75%,1);
+    background-color: hsl(0,100%,72%);
 }

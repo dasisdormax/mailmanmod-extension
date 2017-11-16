@@ -24,7 +24,7 @@
 function actionNew(id) {
     var first   = lists.length > 0 ? lists[0] : null;
     var current = id ? getListById(id) : null;
-    $("#edit>h3>span").text(_("headingNew"));
+    $("#edit>h3").text(_("headingNew"));
     showEditForm(copyList(current || first));
 }
 
@@ -34,7 +34,7 @@ function actionEdit(id) {
 	return;
     }
     var list = getListById(id);
-    $("#edit>h3>span").text(_("headingEdit", [list.name]));
+    $("#edit>h3").text(_("headingEdit", [list.name]));
     showEditForm(list);
 }
 
@@ -62,6 +62,7 @@ function actionRefresh() {
 function listActionClick() {
     var id = $("input[name=listid]:checked").val();
     var action = $("#mmm-select-action").val();
+    status();
     console.log(context, "Executing action " + action + " on item " + id + " ...");
     switch(action) {
 	case "new":
@@ -194,7 +195,8 @@ function unrenderListById(id) {
 }
 
 function renderMailDetails(list, details) {
-    $("#details > h3 > span").text(_("headingDetails", [details.msgid, list.name]));
+    select("#details");
+    $("#details > h3:first").text(_("headingDetails", [details.msgid, list.name]));
     $("#summary").empty();
     $("#summary").append('<strong>');
     $("#summary > strong").text(details.subject);
@@ -219,7 +221,6 @@ function renderMailDetails(list, details) {
     $("#mail-listid").val(list.id);
     $("#mail-msgid").val(details.msgid);
     $("#mail-csrftoken").val(details.csrf_token || '');
-    select("#details");
 }
 
 function status(text) {
@@ -283,11 +284,11 @@ var context = "[POPUP]";
 
 $(function() {
     $("body").html(localizeHtml);
-    $("#mmm-list-perform-action").click(listActionClick);
-    $("#mmm-edit-save"          ).click(editSaveClick);
-    $("#mmm-options"            ).click(optionsClick);
-    $("#status"                 ).click(() => status(''));
-    $("button[data-cancel]"     ).click(() => select("#main"));
-    $("button[data-mailaction]" ).click(detailActionClick);
+    $("#mmm-list-action-go"    ).click(listActionClick);
+    $("#mmm-edit-save"         ).click(editSaveClick);
+    $("#mmm-options"           ).click(optionsClick);
+    $("#status"                ).click(() => status(''));
+    $("button[data-cancel]"    ).click(() => select("#main"));
+    $("button[data-mailaction]").click(detailActionClick);
     loadAll();
 });

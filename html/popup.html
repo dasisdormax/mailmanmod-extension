@@ -12,23 +12,27 @@
 <body>
     <div id="main">
 	<div class="roundrect">
-	    <h3><span>__MSG_headingMain__</span></h3>
-	    <div id="mmm-lists">
+	    <h3>__MSG_headingMain__</h3>
+	    <hr>
+	    <div class="content" id="mmm-lists">
 	    </div>
-	    <select id="mmm-select-action" class="fw">
-		<option value="refresh">__MSG_actionRefreshAll__</option>
-		<option value="new" selected>__MSG_actionNew__</option>
-		<option value="edit">__MSG_actionEdit__</option>
-		<option value="delete">__MSG_actionDelete__</option>
-	    </select>
-	    <button id="mmm-list-perform-action" class="fw blue">__MSG_buttonPerformAction__</button>
+	    <div class="actiongroup clearfix">
+		<select id="mmm-select-action" class="grey">
+		    <option value="" selected>__MSG_actionSelect__</option>
+		    <option value="refresh">__MSG_actionRefreshAll__</option>
+		    <option value="new">__MSG_actionNew__</option>
+		    <option value="edit">__MSG_actionEdit__</option>
+		    <option value="delete">__MSG_actionDelete__</option>
+		</select>
+		<button id="mmm-list-action-go" class="blue">__MSG_buttonActionGo__</button>
+	    </div>
 	</div>
 	<div class="clearfix">
 	    <button id="mmm-options" class="fw grey">__MSG_buttonOptions__</button>
 	</div>
     </div>
     <div id="edit" class="roundrect hidden">
-	<h3><span></span></h3>
+	<h3></h3>
 	<button class="fw grey" data-cancel>__MSG_buttonCancel__</button>
 	<form spellcheck="false">
 	    <input type="hidden" id="edit-id" value="">
@@ -42,13 +46,15 @@
 	<button id="mmm-edit-save" class="fw green">__MSG_buttonSave__</button>
     </div>
     <div id="details" class="roundrect hidden">
-	<h3><span>__MSG_headingDetails__</span></h3>
+	<h3>__MSG_headingDetails__</h3>
 	<button class="fw grey" data-cancel>__MSG_buttonCancel__</button>
 	<p id="summary"></p>
 	<div id="mail">
-	    <h4>__MSG_mailHeaders__</h4>
+	    <hr>
+	    <h3>__MSG_mailHeaders__</h3>
 	    <p id="headers"></p>
-	    <h4>__MSG_mailContent__</h4>
+	    <hr>
+	    <h3>__MSG_mailContent__</h3>
 	    <p id="fulltext"></p>
 	</div>
 	<input type="hidden" id="mail-listid"    value="">

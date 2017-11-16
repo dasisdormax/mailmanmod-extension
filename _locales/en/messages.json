@@ -77,6 +77,10 @@
 	"message": "New join request",
 	"description": "The subject displayed for a join request message"
     },
+    "actionSelect": {
+	"message": "Select an action ...",
+	"description": "The text displayed when no action has been selected"
+    },
     "actionRefreshAll": {
 	"message": "Refresh all lists",
 	"description": "The text for the refresh all action option"
@@ -93,8 +97,8 @@
 	"message": "Delete selected list",
 	"description": "The text for the delete selected list action option"
     },
-    "buttonPerformAction": {
-	"message": "Perform selected action",
+    "buttonActionGo": {
+	"message": "Go!",
 	"description": "The caption for the perform action button"
     },
     "buttonOptions": {
