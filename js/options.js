@@ -26,7 +26,7 @@
 
 function doImport() {
     var file = this.files[0];
-    if(!file || file.type.search(/json/) < 0) {
+    if(!file || (file.type.search(/json/i) < 0 && file.name.search(/.json$/i) < 0)) {
 	status(_('errImportFiletype'));
 	return;
     }
