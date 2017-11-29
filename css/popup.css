@@ -101,7 +101,7 @@ label > span.error {
     margin: 0px;
     color: black;
 }
-.roundrect hr + h3 {
+#details div h3 {
     margin: 15px 0 5px;
 }
 
@@ -120,7 +120,7 @@ label > span.error {
 }
 
 /* MAIL DETAILS */
-#headers, #fulltext {
+#details div p {
     word-wrap: break-word;
     white-space: pre-wrap;
 }

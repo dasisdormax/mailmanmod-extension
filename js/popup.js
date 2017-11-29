@@ -208,13 +208,14 @@ function renderMailDetails(list, details) {
 	$("#summary").append(__('mailSize', [details.size]));
 	$("#summary").append('<br>');
 	$("#summary").append(__('mailTime', [details.time]));
-	$("#headers").text(details.headers);
+	$("#headers p").text(details.headers);
+	toggleHeaderDisplay(false);
 	var text = details.text;
 	text = text.replace(/<style[^<]*/i,'');             // Remove content of <style> elements
 	text = text.replace(/<[a-zA-Z!\/-][^>]*(>|$)/g,''); // Remove HTML tags and comments
 	text = text.replace(/\n\s+\n/g,"\n\n");             // Remove unnecessary whitespace and linebreaks
 	text = text.trim();                                 // Remove leading and trailing whitespace
-	$("#fulltext").text(text);
+	$("#fulltext p").text(text);
     } else {
 	$("#mail").addClass('hidden');
     }
@@ -222,6 +223,19 @@ function renderMailDetails(list, details) {
     $("#mail-msgid").val(details.msgid);
     $("#mail-csrftoken").val(details.csrf_token || '');
 }
+
+function toggleHeaderDisplay(display) {
+    if(display === undefined)
+	display = $("#headers").hasClass("hidden");
+    if(display) {
+	$("#mmm-header-toggle").text(_("buttonHeadersHide"));
+	$("#headers").removeClass("hidden");
+    } else {
+	$("#mmm-header-toggle").text(_("buttonHeadersShow"));
+	$("#headers").addClass("hidden");
+    }
+}
+
 
 function status(text) {
     if(text) {
@@ -289,6 +303,7 @@ $(function() {
     $("#mmm-options"           ).click(optionsClick);
     $("#status"                ).click(() => status(''));
     $("button[data-cancel]"    ).click(() => select("#main"));
+    $("#mmm-header-toggle"     ).click(() => toggleHeaderDisplay());
     $("button[data-mailaction]").click(detailActionClick);
     loadAll();
 });

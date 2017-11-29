@@ -117,6 +117,14 @@
 	"message": "Details",
 	"description": "The caption for the mail details button"
     },
+    "buttonHeadersShow": {
+	"message": "Kopfzeilen anzeigen",
+	"description": "The caption for the show headers button on the detail page"
+    },
+    "buttonHeadersHide": {
+	"message": "Kopfzeilen ausblenden",
+	"description": "The caption for the hide headers button on the detail page"
+    },
     "buttonDecideLater": {
 	"message": "Später entscheiden",
 	"description": "The caption for the mail decide later button"
@@ -166,7 +174,7 @@
 	"description": "The mail receival time field name"
     },
     "mailHeaders": {
-	"message": "MAIL-HEADER",
+	"message": "KOPFZEILEN",
 	"description": "The mail header section heading"
     },
     "mailContent": {
