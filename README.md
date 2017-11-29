@@ -40,7 +40,7 @@ Note that you may have to repeat these steps each time you restart your browser.
 
 
 ## Example screenshot
-<img title="Main panel example" src="example.png" width="450px">
+<img title="Main panel example" src="images/screenshots/firefox-1.png" width="450px">
 
 
 ## License, attributions
