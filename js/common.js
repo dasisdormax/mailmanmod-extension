@@ -2,7 +2,7 @@
 /*
  * Mailmanmod WebExtension - manage all your mailinglists in one place
  *
- * Copyright (C) 2017 Maximilian Wende
+ * Copyright (C) 2017-2020 Maximilian Wende
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -107,17 +107,17 @@ function listUrl(list) {
 
 // Checks a list object for errors
 // Returns the message code if an error was found, null otherwise
-function listHasError(list) {
+function listDataInvalid(list) {
     if (!list.name)
-	return "errListNameEmpty";
+	return "listInvalidNameEmpty";
     if (list.name.search(/[/?]/) !== -1)
-	return "errListNameIllegal";
+	return "listInvalidNameIllegal";
     if (list.baseurl.search(/^https?:\/\//) !== 0)
-	return "errListBaseurlProtocol";
+	return "listInvalidProtoIllegal";
     if (list.baseurl.indexOf("*") !== -1)
-	return "errListBaseurlIllegal";
+	return "listInvalidUrlIllegal";
     if (!list.password)
-	return "errListPasswordEmpty";
+	return "listInvalidPasswordEmpty";
     return null;
 }
 

@@ -73,6 +73,10 @@
 	"message": "INVALID PASSWORD",
 	"description": "The message displayed when the given password is invalid"
     },
+    "listErrNoNetwork": {
+	"message": "NETWORK CURRENTLY OFFLINE",
+	"description": "The message displayed when the network is offline"
+    },
     "listJoinRequest": {
 	"message": "New join request",
 	"description": "The subject displayed for a join request message"
@@ -88,6 +92,10 @@
     "actionNew": {
 	"message": "Create a new mailing list",
 	"description": "The text for the create new list action option"
+    },
+    "actionOpen": {
+	"message": "Open moderation overview for this list",
+	"description": "The text for the open list admindb action option"
     },
     "actionEdit": {
 	"message": "Edit selected list",
@@ -193,19 +201,19 @@
 	"message": "Error: No list selected!",
 	"description": "The error displayed when trying to perform an action with no list selected"
     },
-    "errListNameEmpty": {
+    "listInvalidNameEmpty": {
 	"message": "Error: List name is empty!",
 	"description": "The error displayed when trying to save a list with an empty name"
     },
-    "errListNameIllegal": {
+    "listInvalidNameIllegal": {
 	"message": "Error: List name contains illegal characters!",
 	"description": "The error displayed when trying to save a list with an illegal name"
     },
-    "errListBaseurlProtocol": {
+    "listInvalidProtoIllegal": {
 	"message": "Error: Base URL does not contain a valid protocol (http:// or https://)!",
 	"description": "The error displayed when trying to save a list with an invalid or missing base URL protocol"
     },
-    "errListBaseurlIllegal": {
+    "listInvalidUrlIllegal": {
 	"message": "Error: Base URL contains illegal characters!",
 	"description": "The error displayed when trying to save a list with an illegal base URL"
     },

@@ -2,7 +2,7 @@
 /*
  * Mailmanmod WebExtension - manage all your mailinglists in one place
  *
- * Copyright (C) 2017 Maximilian Wende
+ * Copyright (C) 2017-2020 Maximilian Wende
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -36,11 +36,11 @@ function doImport() {
 	try {
 	    var json = event.target.result;
 	    var parsed = JSON.parse(json);
-	    if(!Array.isArray(parsed)) throw 5;
+	    if(!Array.isArray(parsed)) throw 420;
 	    var i;
 	    for(i = 0; i < parsed.length; i++) {
 		let item = parsed[i];
-		if(listHasError(item)) throw 5;
+		if(listDataInvalid(item)) throw 420;
 		let list = lists.find((list) => list.name === item.name) || newList();
 		list.name     = item.name;
 		list.baseurl  = item.baseurl + (item.compatible ? "/admindb" : '');

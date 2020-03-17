@@ -70,12 +70,16 @@
 	"description": "The message displayed when loading a list failed for an unknown reason"
     },
     "listErrNotFound": {
-	"message": "LISTE NICHT ERREICHBAR",
+	"message": "LISTE NICHT VORHANDEN",
 	"description": "The message displayed when the computed URL points to no list at all"
     },
     "listErrBadPassword": {
 	"message": "UNGÜLTIGES PASSWORT",
 	"description": "The message displayed when the given password is invalid"
+    },
+    "listErrNoNetwork": {
+	"message": "KEINE NETZWERKVERBINDUNG",
+	"description": "The message displayed when the network is offline"
     },
     "actionSelect": {
 	"message": "Aktion auswählen ...",
@@ -88,6 +92,10 @@
     "actionNew": {
 	"message": "Neue Liste erstellen",
 	"description": "The text for the create new list action option"
+    },
+    "actionOpen": {
+	"message": "Moderationsübersicht der Liste öffnen",
+	"description": "The text for the open list admindb action option"
     },
     "actionEdit": {
 	"message": "Liste bearbeiten",
@@ -193,19 +201,19 @@
 	"message": "Fehler: Keine Liste ausgewählt!",
 	"description": "The error displayed when trying to perform an action with no list selected"
     },
-    "errListNameEmpty": {
+    "listInvalidNameEmpty": {
 	"message": "Fehler: Listenname fehlt!",
 	"description": "The error displayed when trying to save a list with an empty name"
     },
-    "errListNameIllegal": {
+    "listInvalidNameIllegal": {
 	"message": "Fehler: Listenname enthält ungültige Zeichen!",
 	"description": "The error displayed when trying to save a list with an illegal name"
     },
-    "errListBaseurlProtocol": {
+    "listInvalidProtoIllegal": {
 	"message": "Fehler: Protokoll der Server-URL ist nicht gesetzt (Erlaubt sind http:// und https://)!",
 	"description": "The error displayed when trying to save a list with an invalid or missing base URL protocol"
     },
-    "errListBaseurlIllegal": {
+    "listInvalidUrlIllegal": {
 	"message": "Fehler: Server-URL enthält ungültige Zeichen!",
 	"description": "The error displayed when trying to save a list with an illegal base URL"
     },

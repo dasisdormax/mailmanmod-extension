@@ -2,7 +2,7 @@
 /*
  * Mailmanmod WebExtension - manage all your mailinglists in one place
  *
- * Copyright (C) 2017 Maximilian Wende
+ * Copyright (C) 2017-2020 Maximilian Wende
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -79,6 +79,11 @@ function refreshList(list) {
 		list.error = 'listErrBadPassword'; break;
 	    case 404:
 		list.error = 'listErrNotFound'; break;
+	    case 0:
+		// Network is not available - try again later
+		list.error = 'listErrNoNetwork';
+		saveList(list);
+		return;
 	    default:
 		list.error = 'listErrUnknown';
 	}

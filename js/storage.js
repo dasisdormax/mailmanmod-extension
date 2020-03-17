@@ -2,7 +2,7 @@
 /*
  * Mailmanmod WebExtension - manage all your mailinglists in one place
  *
- * Copyright (C) 2017 Maximilian Wende
+ * Copyright (C) 2017-2020 Maximilian Wende
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -262,7 +262,7 @@ var deleteCredentialWithId;
 		let id = list.id;
 		if("list_" + list.id !== key)
 		    continue;
-		if(listHasError(list))
+		if(listDataInvalid(list))
 		    continue;
 
 		// If this is a new list or the credentials have changed, load it!
@@ -273,7 +273,7 @@ var deleteCredentialWithId;
 	    }
 	}
 	if(lists.length === 0 && Array.isArray(items.lists) && items.lists.length > 0) {
-	    items.lists.forEach((list) => listHasError(list) || updateCredential(list));
+	    items.lists.forEach((list) => listDataInvalid(list) || updateCredential(list));
 	    // If the user has used a previous version with syncing not optional, assume
 	    // that the user wants to continue using that behaviour unless he explicitly
 	    // disables it

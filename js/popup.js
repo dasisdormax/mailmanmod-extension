@@ -2,7 +2,7 @@
 /*
  * Mailmanmod WebExtension - manage all your mailinglists in one place
  *
- * Copyright (C) 2017 Maximilian Wende
+ * Copyright (C) 2017-2020 Maximilian Wende
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -26,6 +26,16 @@ function actionNew(id) {
     var current = id ? getListById(id) : null;
     $("#edit>h3").text(_("headingNew"));
     showEditForm(copyList(current || first));
+}
+
+function actionOpen(id) {
+    if(!id) {
+	status(_("errNoListSelected"));
+	return;
+    }
+    var list = getListById(id);
+    var url = listUrl(list);
+    window.open(url, "_blank");
 }
 
 function actionEdit(id) {
@@ -67,6 +77,8 @@ function listActionClick() {
     switch(action) {
 	case "new":
 	    actionNew(id); break;
+	case "open":
+	    actionOpen(id); break;
 	case "edit":
 	    actionEdit(id); break;
 	case "delete":
@@ -117,7 +129,7 @@ function editSaveClick() {
     list.id = $('#edit-id').val();
 
     // Validate
-    var error = listHasError(list);
+    var error = listDataInvalid(list);
     if(error) {
 	status(_(error));
     } else {
@@ -154,7 +166,7 @@ function renderList(list, index, isRename) {
     $(div).append('<label for="r-' + id + '">');
     $(label).text(list.name);
 
-    if(!list.time) {
+    if(!list.error && !list.time) {
 	$(label).prepend("<span>" + __("listLoading") + "</span> ");
 	refreshList(list);
     } else {

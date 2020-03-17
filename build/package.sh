@@ -2,7 +2,7 @@
 #
 # Mailmanmod WebExtension - manage all your mailinglists in one place
 #
-# Copyright (C) 2017 Maximilian Wende
+# Copyright (C) 2017-2020 Maximilian Wende
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the Affero GNU General Public License as published
@@ -38,7 +38,7 @@ FILES=(
     icons/mmm-64.png
     extern/downloadjs/download.js
     extern/downloadjs/LICENSE.md
-    extern/jquery/jquery-3.2.1.min.js
+    extern/jquery/jquery-3.4.1.min.js
     extern/jquery/LICENSE.txt
 )
 
