@@ -112,7 +112,7 @@ function listDataInvalid(list) {
 	return "listInvalidNameEmpty";
     if (list.name.search(/[/?]/) !== -1)
 	return "listInvalidNameIllegal";
-    if (list.baseurl.search(/^https?:\/\//) !== 0)
+    if (list.baseurl.search(/^https:\/\//) !== 0)
 	return "listInvalidProtoIllegal";
     if (list.baseurl.indexOf("*") !== -1)
 	return "listInvalidUrlIllegal";

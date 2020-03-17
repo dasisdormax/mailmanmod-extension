@@ -126,6 +126,10 @@ function editSaveClick() {
 	baseurl:  $('#edit-baseurl').val().trim().replace(/\/+$/,""),
 	password: $('#edit-password').val()
     });
+    // Add "https://" protocol automatically if not given already
+    if(list.baseurl.indexOf("//") < 0 && list.baseurl.indexOf("/") > 0) {
+        list.baseurl = `https://${list.baseurl}`;
+    }
     list.id = $('#edit-id').val();
 
     // Validate

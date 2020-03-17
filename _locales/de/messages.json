@@ -210,7 +210,7 @@
 	"description": "The error displayed when trying to save a list with an illegal name"
     },
     "listInvalidProtoIllegal": {
-	"message": "Fehler: Protokoll der Server-URL ist nicht gesetzt (Erlaubt sind http:// und https://)!",
+	"message": "Fehler: Protokoll der Server-URL ist nicht gesetzt (Erlaubt ist nur https://)!",
 	"description": "The error displayed when trying to save a list with an invalid or missing base URL protocol"
     },
     "listInvalidUrlIllegal": {

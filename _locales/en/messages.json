@@ -210,7 +210,7 @@
 	"description": "The error displayed when trying to save a list with an illegal name"
     },
     "listInvalidProtoIllegal": {
-	"message": "Error: Base URL does not contain a valid protocol (http:// or https://)!",
+	"message": "Error: Base URL does not contain a valid protocol (use https://)!",
 	"description": "The error displayed when trying to save a list with an invalid or missing base URL protocol"
     },
     "listInvalidUrlIllegal": {
