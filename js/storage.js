@@ -140,15 +140,15 @@ var deleteCredentialWithId;
 		    let change = changes[key];
 		    if(isOwnChange(key, change))
 			continue;
-		    console.log(context, area + " '" + key + "' changed:", change);
+		    console.log(context, `${area} '${key}' changed: ${change}`);
 
 		    if(key.indexOf('list_') === 0) {
 			// Update a list
-			if( change.newValue && key == 'list_' + change.newValue.id) {
+			if( change.newValue && key == `list_${change.newValue.id}`) {
 			    // wait for a local change of the same list to be processed first
 			    setTimeout(() => saveList(change.newValue), 2000);
 			}
-			if(!change.newValue && key == 'list_' + change.oldValue.id) {
+			if(!change.newValue && key == `list_${change.oldValue.id}`) {
 			    deleteCredentialWithId(change.oldValue.id);
 			}
 			updateIcon();
@@ -160,7 +160,7 @@ var deleteCredentialWithId;
 		    let change = changes[key];
 		    if(isOwnChange(key, change))
 			continue;
-		    console.log(context, area + " '" + key + "' changed:", change);
+		    console.log(context, `${area} '${key}' changed: ${change}`);
 
 		    if(key === 'settings' && change.newValue) {
 			// Update settings
@@ -174,9 +174,9 @@ var deleteCredentialWithId;
 
 		    if(key.indexOf('list_') === 0) {
 			// Update a list that has been changed by another local script
-			if( change.newValue && key == 'list_' + change.newValue.id)
+			if( change.newValue && key == `list_${change.newValue.id}`)
 			    updateList(changes[key].newValue);
-			if(!change.newValue && key == 'list_' + change.oldValue.id)
+			if(!change.newValue && key == `list_${change.oldValue.id}`)
 			    deleteListLocally(change.oldValue.id);
 			updateIcon();
 		    }
@@ -215,7 +215,7 @@ var deleteCredentialWithId;
 			}
 			// Remove all lists that have been removed remotely
 			lists = lists.filter(function(list) {
-			    var key = "list_" + list.id;
+			    var key = `list_${list.id}`;
 			    return (key in syncItems) || !list.changedAt || (list.changedAt > syncedAt);
 			});
 			// Update lists that have been changed remotely
@@ -260,7 +260,7 @@ var deleteCredentialWithId;
 		// Plausibility check
 		let list = items[key];
 		let id = list.id;
-		if("list_" + list.id !== key)
+		if(`list_${list.id}` !== key)
 		    continue;
 		if(listDataInvalid(list))
 		    continue;
@@ -316,7 +316,7 @@ var deleteCredentialWithId;
     // Saves a single list to local storage
     saveList = function(list) {
 	if(!updateList(list)) return false;
-	var key = "list_" + list.id;
+	var key = `list_${list.id}`;
 	var obj = {};
 	obj[key] = list;
 	setLocal(obj);
@@ -338,8 +338,8 @@ var deleteCredentialWithId;
 	    sync = saveList(list);
 	}
 	if(sync && settings.hasSync && settings.useSync) {
-	    console.log(context, "Uploading list '" + list.name + "' to sync storage ...");
-	    var key = "list_" + list.id;
+	    console.log(context, `Uploading list '${list.name}' to sync storage ...`);
+	    var key = `list_${list.id}`;
 	    var obj = {};
 	    obj[key] = list;
 	    set(chrome.storage.sync, obj, handleSyncResult);
@@ -349,7 +349,7 @@ var deleteCredentialWithId;
     // Deletes list credentials from local and cloud storage
     deleteCredentialWithId = function(id) {
 	var key = "list_" + id;
-	console.log(context, "Removing '" + key + "'");
+	console.log(context, `Removing '${key}'`);
 	deleteListLocally(id);
 	removeAll(key);
 	updateIcon();

@@ -73,7 +73,7 @@
 	"message": "INVALID PASSWORD",
 	"description": "The message displayed when the given password is invalid"
     },
-    "listErrNoNetwork": {
+    "listWarnNoNetwork": {
 	"message": "NETWORK CURRENTLY OFFLINE",
 	"description": "The message displayed when the network is offline"
     },

@@ -73,7 +73,7 @@ function listActionClick() {
     var id = $("input[name=listid]:checked").val();
     var action = $("#mmm-select-action").val();
     status();
-    console.log(context, "Executing action " + action + " on item " + id + " ...");
+    console.log(context, `Executing action ${action} on item ${id} ...`);
     switch(action) {
 	case "new":
 	    actionNew(id); break;
@@ -148,13 +148,13 @@ function optionsClick() {
  *************/
 function renderList(list, index, isRename) {
     var id    = list.id;
-    var div   = "div#d-" + id;
-    var label = div + ">label";
+    var div   = `div#d-${id}`;
+    var label = `${div}>label`;
     if(isRename || !$(div).length) {
-	let html = '<div id="d-' + id + '">';
+	let html = `<div id="d-${id}">`;
 	let elem = $(div).length ? $(div) : $(html);
 	if(index >= 0 && lists[index+1]) {
-	    $("div#d-" + lists[index+1].id).before(elem);
+	    $(`div#d-${lists[index+1].id}`).before(elem);
 	} else {
 	    $("#mmm-lists").append(elem);
 	}
@@ -163,47 +163,49 @@ function renderList(list, index, isRename) {
     $(div).empty();
 
     // create list label and radio button
-    $(div).append('<label for="r-' + id + '">');
+    $(div).append(`<label for="r-${id}">`);
     $(label).text(list.name);
 
     if(!list.error && !list.time) {
-	$(label).prepend("<span>" + __("listLoading") + "</span> ");
+	$(label).prepend(`<span>${__("listLoading")}</span> `);
 	refreshList(list);
     } else {
-	if(list.error) {
+	let err = list.error;
+	if(err) {
 	    // Display error message
-	    $(label).append(' <span class="error">' + __(list.error) || __("listErrUnknown") + '</span>');
+	    let errClass = err.indexOf("Warn") >= 0 ? "warning" : "error";
+	    $(label).append(` <span class="${errClass}">${__(err) || __("listErrUnknown")}</span>`);
 	} else if(list.mails && list.mails.length > 0) {
 	    list.mails.forEach(function(mail) {
 		let msgid    = mail.msgid;
-		let mdivid   = 'm-' + id + '-' + msgid;
-		let mdiv     = '#' + mdivid;
-		let p        = mdiv + ">p";
-		let clearfix = mdiv + ">.clearfix";
+		let mdivid   = `m-${id}-${msgid}`;
+		let mdiv     = `#${mdivid}`;
+		let p        = `${mdiv}>p`;
+		let clearfix = `${mdiv}>.clearfix`;
 		// Create child div for each e-mail
-		$(div).append('<div class="mail" id="' + mdivid + '">');
+		$(div).append(`<div class="mail" id="${mdivid}">`);
 		$(mdiv).attr('data-msgid', msgid);
 		$(mdiv).attr('data-listid', id);
 		$(mdiv).append('<p>');
 		$(p).append('<strong>');
-		$(p + ">strong").text(mail.subject);
+		$(`${p}>strong`).text(mail.subject);
 		$(p).append('<br>');
 		$(p).append(__("mailFrom", [mail.from]));
 		$(mdiv).append('<div class="clearfix">');
-		$(clearfix).append('<button class="hw green" data-accept>' + __('buttonAccept')  + "</button>");
-		$(clearfix).append('<button class="hw grey" data-details>' + __('buttonDetails') + "</button>");
-		$(clearfix + ">button[data-accept]" ).click(mailAcceptClick);
-		$(clearfix + ">button[data-details]").click(mailDetailsClick);
+		$(clearfix).append(`<button class="hw green" data-accept>${__('buttonAccept')}</button>`);
+		$(clearfix).append(`<button class="hw grey" data-details>${__('buttonDetails')}</button>`);
+		$(`${clearfix}>button[data-accept]` ).click(mailAcceptClick);
+		$(`${clearfix}>button[data-details]`).click(mailDetailsClick);
 	    });
 	} else {
-	    $(label).append(' <span>' + __("listNoMessages") + '</span>');
+	    $(label).append(` <span>${__("listNoMessages")}</span>`);
 	}
     }
-    $(label).prepend('<input type="radio" id="r-' + id + '" name="listid" value="' + id + '">');
+    $(label).prepend(`<input type="radio" id="r-${id}" name="listid" value="${id}">`);
 }
 
 function unrenderListById(id) {
-    $("div#d-" + id).remove();
+    $(`div#d-${id}`).remove();
 }
 
 function renderMailDetails(list, details) {

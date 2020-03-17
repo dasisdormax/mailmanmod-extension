@@ -77,7 +77,7 @@
 	"message": "UNGÜLTIGES PASSWORT",
 	"description": "The message displayed when the given password is invalid"
     },
-    "listErrNoNetwork": {
+    "listWarnNoNetwork": {
 	"message": "KEINE NETZWERKVERBINDUNG",
 	"description": "The message displayed when the network is offline"
     },

@@ -56,7 +56,7 @@ function updateList(list, isRename) {
     var idAt   = lists.findIndex((other) => other.id   == list.id);
     if(nameAt >= 0 && lists[nameAt].name == list.name && idAt !== nameAt) {
 	// The new list has the same name, but a different ID
-	console.log(context, "Merging two lists with the same name '" + list.name + "'");
+	console.log(context, `Merging two lists with the same name '${list.name}'`);
 	var delId = list.id;
 	if(list.changedAt > lists[nameAt].changedAt) {
 	    list.id = lists[nameAt].id;
@@ -82,7 +82,7 @@ function updateList(list, isRename) {
 	if(idAt !== nameAt) {
 	    // The list has been renamed and we have to update its position
 	    // => we remove the list from the lists array and insert it back in the correct position
-	    console.log(context, "Moving list '" + list.name + "' after the rename ...");
+	    console.log(context, `Moving list '${list.name}' after the rename ...`);
 	    lists.splice(idAt, 1);
 	    return updateList(list, true);
 	}
@@ -135,7 +135,7 @@ function updateIcon() {
 
 // Shortcuts for getting a localized string
 // Using two underscores will additionally escape html special characters
-var _  = (msg, args) => chrome.i18n.getMessage(msg, args) || "__MSG_" + msg + "__";
+var _  = (msg, args) => chrome.i18n.getMessage(msg, args) || `__MSG_${msg}__`;
 var __ = (msg, args) => $("<div>").text(_(msg, args)).html();
 
 // If the last operation has a chrome.runtime.lastError, display its message

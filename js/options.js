@@ -73,7 +73,7 @@ function doExport() {
     });
     var json = JSON.stringify(tmp, null, 2);
     // Create data url to download the JSON from
-    var dataurl = "data:text/json;base64," + btoa(json);
+    var dataurl = `data:text/json;base64,${btoa(json)}`;
     download(dataurl, "mmm.json", "text/json");
 }
 

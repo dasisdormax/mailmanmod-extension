@@ -89,7 +89,10 @@ label > span {
     color: hsl(0,0%,50%);
 }
 label > span.error {
-    color: hsl(0,100%,60%);
+    color: hsl(0,100%,50%);
+}
+label > span.warning {
+    color: hsl(60,100%,35%);
 }
 .mail {
     margin: 10px;

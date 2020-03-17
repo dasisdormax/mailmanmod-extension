@@ -24,14 +24,14 @@
 
 // Checks if a list exists, without sending the password
 function checkList(list, oldList) {
-    console.log(context, "Checking if list '" + list.name + "' exists ...");
-    var url = listUrl(list) + "/logout";
+    console.log(context, `Checking if list '${list.name}' exists ...`);
+    var url = `${listUrl(list)}/logout`;
     // The function executed when the request fails OR does not land on an admin page
     var onError = function() {
 	if(!oldList && list.baseurl.search("/admindb$") === -1) {
 	    var newList = copyList(list);
 	    newList.id      = list.id;
-	    newList.baseurl = list.baseurl + "/admindb";
+	    newList.baseurl = `${list.baseurl}/admindb`;
 	    checkList(newList, list);
 	} else {
 	    if(oldList) list = oldList;
@@ -62,7 +62,7 @@ function refreshList(list) {
 	    checkList(list);
 	return;
     }
-    console.log(context, "Refreshing list '" + list.name + "' ...");
+    console.log(context, `Refreshing list '${list.name}' ...`);
     var url = listUrl(list);
     var data = {
 	adminpw:  list.password,
@@ -73,7 +73,7 @@ function refreshList(list) {
 	parseAdmindb(list, html);
 	saveList(list);
     }).fail(function(request){
-	console.log(context, "Error refreshing list '" + list.name + "', request object:", request);
+	console.log(context, `Error refreshing list '${list.name}', request object: ${request}`);
 	switch(request.status) {
 	    case 401:
 		list.error = 'listErrBadPassword'; break;
@@ -81,7 +81,7 @@ function refreshList(list) {
 		list.error = 'listErrNotFound'; break;
 	    case 0:
 		// Network is not available - try again later
-		list.error = 'listErrNoNetwork';
+		list.error = 'listWarnNoNetwork';
 		saveList(list);
 		return;
 	    default:
@@ -162,13 +162,13 @@ function mailAction(action, list, mail, isRepeat) {
 	    action = "--";
 	    value = 0;
     }
-    console.log(context, "Executing action " + action + " on " + type + " #" + msgid + " in list " + list.name);
+    console.log(context, `Executing action ${action} on ${type} #${msgid} in list ${list.name}`);
     var data = {
 	csrf_token,
 	submit: "Submit Data ..."
     }
     data[msgid] = value;
-    data["comment-" + msgid] = '';
+    data[`comment-${msgid}`] = '';
     console.log(context, "POST data:", data);
 
     // Send data to the server
@@ -231,7 +231,7 @@ function parseAdmindbJoinRequest(list, row) {
     var name = row.find("td em").text().trim();
     row.find("td em").remove();
     var from = row.find("td").first().text().trim();
-    from = name ? name + " (" + from + ")" : from;
+    from = name ? `${name} (${from})` : from;
     // Get request ID: the name of the first radio button
     var msgid = row.find(':radio').attr("name");
     var mail  = {
@@ -277,8 +277,8 @@ function parseMailDetails(msgid, html) {
     if(result.find("textarea").length) {
 	details = {
 	    csrf_token: result.find("input[name=csrf_token]").val() || '',
-	    headers:    result.find('textarea[name="headers-'  + msgid + '"]').val(),
-	    text:       result.find('textarea[name="fulltext-' + msgid + '"]').val()
+	    headers:    result.find(`textarea[name="headers-${msgid}"]`).val(),
+	    text:       result.find(`textarea[name="fulltext-${msgid}"]`).val()
 	};
     }
     result.empty();
