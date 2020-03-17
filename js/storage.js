@@ -262,12 +262,7 @@ var deleteCredentialWithId;
 		let id = list.id;
 		if(`list_${list.id}` !== key)
 		    continue;
-		// Update protocol from http:// to https://
-		if(list.baseurl.indexOf("https://") !== 0) {
-		    list.baseurl = list.baseurl.replace("http://", "");
-		    list.baseurl = `https://${list.baseurl}`;
-		}
-		if(listDataInvalid(list))
+		if(listLoadInvalid(list))
 		    continue;
 
 		// If this is a new list or the credentials have changed, load it!

@@ -105,6 +105,17 @@ function listUrl(list) {
     return list.baseurl + "/" + list.name.replace(/@.*$/, '');
 }
 
+// Loads a list, migrates older data and checks the list object for errors
+// Returns the message code if an error was found, null otherwise
+function listLoadInvalid(list) {
+    // Update protocol from http:// to https://
+    if(list.baseurl.indexOf("https://") !== 0) {
+        list.baseurl = list.baseurl.replace("http://", "");
+        list.baseurl = `https://${list.baseurl}`;
+    }
+    return listDataInvalid(list);
+}
+
 // Checks a list object for errors
 // Returns the message code if an error was found, null otherwise
 function listDataInvalid(list) {

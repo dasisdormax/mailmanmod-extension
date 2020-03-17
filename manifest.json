@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "0.6.2",
+    "version": "0.6.3",
 
     "description": "__MSG_extensionDescription__",
     "homepage_url": "https://github.com/dasisdormax/mailmanmod-webextension",
@@ -11,7 +11,7 @@
     "browser_specific_settings": {
 	"gecko": {
 	    "id": "mailmanmod@thenail.cc",
-	    "strict_min_version": "60"
+	    "strict_min_version": "60.0"
 	},
 	"edge": {
 	  "browser_action_next_to_addressbar": true

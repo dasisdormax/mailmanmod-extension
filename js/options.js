@@ -40,7 +40,7 @@ function doImport() {
 	    var i;
 	    for(i = 0; i < parsed.length; i++) {
 		let item = parsed[i];
-		if(listDataInvalid(item)) throw 420;
+		if(listLoadInvalid(item)) throw 420;
 		let list = lists.find((list) => list.name === item.name) || newList();
 		list.name     = item.name;
 		list.baseurl  = item.baseurl + (item.compatible ? "/admindb" : '');
