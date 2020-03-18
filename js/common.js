@@ -136,8 +136,11 @@ function listDataInvalid(list) {
 function updateIcon() {
     var mails = 0;
     lists.forEach((list) => mails += list.mails ? list.mails.length : 0);
-    chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-    chrome.browserAction.setBadgeText({text: mails ? mails.toString(10) : ''});
+    // Check for support of browser action functions before calling them
+    let action = chrome.browserAction;
+    action.setBadgeBackgroundColor && action.setBadgeBackgroundColor({color: "hsl(0,80%,50%)"});
+    action.setBadgeText && action.setBadgeText({text: '' + (mails || '')});
+    action.setTitle && action.setTitle({title: _("extensionName") + (mails ? ` (${mails})` : '')});
 }
 
 /*************
