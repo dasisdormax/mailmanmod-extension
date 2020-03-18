@@ -45,7 +45,8 @@ FILES=(
 cd $(dirname $0)
 
 echo "Clearing previous build ..."
-rm mailmanmod.zip 2>/dev/null
+rm -f mailmanmod.zip
+rm -f mailmanmod@thenail.cc.xpi
 mkdir tmp || { echo "Error preparing the build" >&2; exit; }
 
 echo "Copying files into build directory ..."
@@ -64,5 +65,10 @@ echo "Creating archive ..."
     zip -r -T ../mailmanmod.zip *
 )
 
-rm -r tmp
-echo "Done!"
+if (( $? )); then
+    echo "Build failed!"
+else
+    rm -r tmp
+    cp mailmanmod.zip mailmanmod@thenail.cc.xpi
+    echo "Done!"
+fi
