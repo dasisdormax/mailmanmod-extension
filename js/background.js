@@ -29,7 +29,8 @@ function renderList(list) {
     // Note: This condition should make sure that we do not refresh the same time
     // that the popup does
     if(list.time && list.exists && new Date().getTime() - list.time > 1800000) {
-	refreshList(list);
+	if(!list.error)
+	    refreshList(list);
     } else {
 	updateIcon();
     }

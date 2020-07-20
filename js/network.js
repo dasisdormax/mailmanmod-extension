@@ -69,25 +69,25 @@ function refreshList(list) {
 	admlogin: "Login"
     }
     list.error = null;
-    $.post(url, data, function(html) {
+    $.post(url, data, function __refreshList_success(html) {
 	parseAdmindb(list, html);
 	saveList(list);
-    }).fail(function(request){
+    }).fail(function __refreshList_error(request){
 	console.log(context, `Error refreshing list '${list.name}', request object: ${request}`);
+	list.time = new Date().getTime();
 	switch(request.status) {
 	    case 401:
 		list.error = 'listErrBadPassword'; break;
 	    case 404:
 		list.error = 'listErrNotFound'; break;
 	    case 0:
-		// Network is not available - try again later
+		// Network is not available - try again during the next sync
+		list.time = null;
 		list.error = 'listWarnNoNetwork';
-		saveList(list);
-		return;
+		break;
 	    default:
 		list.error = 'listErrUnknown';
 	}
-	list.time = new Date().getTime();
 	saveList(list);
     });
 }
